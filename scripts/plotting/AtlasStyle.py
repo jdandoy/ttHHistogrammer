@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#
+
 # Python ATLAS Style: Based on ATLAS Style
 
 import ROOT
