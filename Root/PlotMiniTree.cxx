@@ -289,26 +289,20 @@ EL::StatusCode PlotMiniTree :: changeInput (bool firstFile)
   // Here you do everything you need to do when we change input files,
   // e.g. resetting branch addresses on trees.  If you are using
   // D3PDReader or a similar service this method is not needed.
-//  if(firstFile){
-//    if ( this->configure() == EL::StatusCode::FAILURE ) {
-//      Error("initialize()", "Failed to properly configure. Exiting." );
-//      return EL::StatusCode::FAILURE;
-//    }
 
-//    TFile* inputFile = wk()->inputFile();
-//    TIter next(inputFile->GetListOfKeys());
-//    TKey *key;
-//    while ((key = (TKey*)next())) {
-//      std::string keyName = key->GetName();
+//  if( m_debug)  Info("changeInput()", "Loading Cutflows \n");
+//  TFile* inputFile = wk()->inputFile();
+//  TIter next(inputFile->GetListOfKeys());
+//  TKey *key;
+//  while ((key = (TKey*)next())) {
+//    std::string keyName = key->GetName();
 //
-//      std::size_t found = keyName.find("cutflow");
+//    std::size_t found = keyName.find("cutflow");
 //
-//      found = keyName.find("weighted");
-//      bool foundWeighted = (found!=std::string::npos);
+//    found = keyName.find("weighted");
+//    bool foundWeighted = (found!=std::string::npos);
 //
-//    }//over Keys
-//
-//  }// first file
+//  }//over Keys
 
   if( m_debug)  Info("changeInput()", "Loading Branches \n");
   TTree *tree = wk()->tree();
@@ -416,7 +410,7 @@ EL::StatusCode PlotMiniTree :: execute ()
   // Start different selections
   for(unsigned int iS=0; iS < selections.size(); ++iS){
 
-    if( m_debug)  Info("execute()", "Starting selection "+selections.at(iS)->name+" \n");
+    if( m_debug)  Info("execute()", "Starting selection %s \n", selections.at(iS)->name.c_str() );
     //selections
     if (jet_pt->size() != selections.at(iS)->jetNum)
       continue;

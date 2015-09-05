@@ -44,12 +44,13 @@ int main( int argc, char* argv[] ) {
          << " job submission" << std::endl
          << std::endl
          << " Optional arguments:" << std::endl
-         << "  -h               Prints this menu" << std::endl
-         << "  -inFile          Path to a folder, root file, or text file" << std::endl
-         << "  -outputTag       Version string to be appended to job name" << std::endl
-         << "  -submitDir       Name of output directory" << std::endl
-         << "  -configName      Path to config file" << std::endl
-         << "  -syst            Name AND value for systematic" << std::endl
+         << "  -h                Prints this menu" << std::endl
+         << "  --file            Path to a folder, root file, or text file" << std::endl
+         << "  --outputTag       Version string to be appended to job name" << std::endl
+         << "  --submitDir       Name of output directory" << std::endl
+         << "  --configName      Path to config file" << std::endl
+         << "  --treeName        Name of input TTree" << std::endl
+         << "  --condor          Option for running condor (Disabled)" << std::endl
          << std::endl;
     exit(1);
   }
@@ -64,57 +65,57 @@ int main( int argc, char* argv[] ) {
        // Ignore if not first argument
        ++iArg;
 
-    } else if (options.at(iArg).compare("-inFile") == 0) {
+    } else if (options.at(iArg).compare("--file") == 0) {
        char tmpChar = options.at(iArg+1)[0];
        if (iArg+1 == argc || tmpChar == '-' ) {
-         std::cout << " -inFile should be followed by a file or folder" << std::endl;
+         std::cout << " --file should be followed by a file or folder" << std::endl;
          return 1;
        } else {
          samplePath = options.at(iArg+1);
          iArg += 2;
        }
 
-    } else if (options.at(iArg).compare("-outputTag") == 0) {
+    } else if (options.at(iArg).compare("--outputTag") == 0) {
        char tmpChar = options.at(iArg+1)[0];
        if (iArg+1 == argc || tmpChar == '-' ) {
-         std::cout << " -outputTag should be followed by a job version string" << std::endl;
+         std::cout << " --outputTag should be followed by a job version string" << std::endl;
          return 1;
        } else {
          outputTag = options.at(iArg+1);
          iArg += 2;
        }
 
-    } else if (options.at(iArg).compare("-submitDir") == 0) {
+    } else if (options.at(iArg).compare("--submitDir") == 0) {
        char tmpChar = options.at(iArg+1)[0];
        if (iArg+1 == argc || tmpChar == '-' ) {
-         std::cout << " -submitDir should be followed by a folder name" << std::endl;
+         std::cout << " --submitDir should be followed by a folder name" << std::endl;
          return 1;
        } else {
          submitDir = options.at(iArg+1);
          iArg += 2;
        }
 
-    } else if (options.at(iArg).compare("-configName") == 0) {
+    } else if (options.at(iArg).compare("--configName") == 0) {
        char tmpChar = options.at(iArg+1)[0];
        if (iArg+1 == argc || tmpChar == '-' ) {
-         std::cout << " -configName should be followed by a config file" << std::endl;
+         std::cout << " --configName should be followed by a config file" << std::endl;
          return 1;
        } else {
          configName = options.at(iArg+1);
          iArg += 2;
        }
 
-    } else if (options.at(iArg).compare("-treeName") == 0) {
+    } else if (options.at(iArg).compare("--treeName") == 0) {
        char tmpChar = options.at(iArg+1)[0];
        if (iArg+1 == argc || tmpChar == '-' ) {
-         std::cout << " -treeName should be followed by a tree name" << std::endl;
+         std::cout << " --treeName should be followed by a tree name" << std::endl;
          return 1;
        } else {
          treeName = options.at(iArg+1);
          iArg += 2;
        }
 
-    } else if (options.at(iArg).compare("-condor") == 0) {
+    } else if (options.at(iArg).compare("--condor") == 0) {
       std::cout << "Running on condor" << std::endl;
       doCondor = true;
       iArg += 1;
