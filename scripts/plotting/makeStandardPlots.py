@@ -14,7 +14,7 @@ import ROOT
 parser = argparse.ArgumentParser(description="%prog [options]", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-b", dest='b', action='store_true', default=False, help="Batch mode for PyRoot")
 parser.add_argument("-v", dest='v', action='store_true', default=False, help="Verbose mode for debugging")
-parser.add_argument("--plotDir", dest='plotDir', default="mu_jets", help="TDirectory to search for plots in ROOT file.  By default no directory")
+parser.add_argument("--plotDir", dest='plotDir', default="sel_4j_2b", help="TDirectory to search for plots in ROOT file.  By default no directory")
 
 
 parser.add_argument("--plotPartial", dest='plotPartial', action='store_true', default=False, help="Plot all histograms, even if some sample types do not contain the histogram (i.e. truth for data)")
@@ -412,7 +412,7 @@ def scaleHists( histTypes, hists, lumiScale ):
           if iHist == 0:
             for iStack, stackHist in enumerate(hists[iHist].GetHists()):
               stackHist.Scale( scaleNorm / bkgScaleFactor )
-          elif histTypes[iHist] == 'data':
+          elif histTypes[iHist] == 'data' and hist.Integral() > 0:
             hist.Scale( scaleNorm / hist.Integral() )
           elif histTypes[iHist] == 'signal':
             hist.Scale( scaleNorm / bkgScaleFactor )

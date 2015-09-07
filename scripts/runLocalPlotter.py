@@ -5,24 +5,21 @@
 # For questions contact Jeff.Dandoy@cern.ch
 #####################################
 
-import os, math, sys, glob
-from time import strftime
+import os, math, sys, glob, subprocess, time, shutil
 
 def main():
-  test = True # does not run the jobs
+  test = False # does not run the jobs
   if not test:
-    if not os.path.exists("gridOutput"):
-      os.system("mkdir gridOutput")
     if not os.path.exists("gridOutput/localJobs"):
-      os.system("mkdir gridOutput/localJobs")
+      os.makedirs('gridOutput/localJobs')
 
   config_name = "$ROOTCOREBIN/data/ttHPlotter/ttHPlotter.config"
 
-  fileDir = ''
-  inputTag = ''
-  outputTag = ''
+  fileDir = '/home/jdandoy/Documents/ttHFW/gridOutput/output/'
+  inputTag = 'Main'
+  outputTag = 'test'
 
-  timestamp = strftime("_%Y%m%d")
+  timestamp = time.strftime("_%Y%m%d")
   outputTag += timestamp
 
   files = glob.glob(fileDir+'/*'+inputTag+'*.root')
@@ -33,14 +30,17 @@ def main():
   if not os.path.exists('logs/'+outputTag+'/'):
     os.makedirs('logs/'+outputTag+'/')
 
+  ## Submit histogramming jobs ##
   for file in files:
 
-    fileTag = ''
-    logFile='logs/'+outputTag+'/ttHPlotter_{0}'.format(fileTag)
-    submit_dir = 'gridOutput/localJobs/'
-    this_output_tag = '...'+outputTag
+    fileTag = os.path.basename(file)[:-5] #remove path and .root
+    logFile='logs/'+outputTag+'/ttHPlotter_{0}'.format(fileTag)+'.log'
+    submit_dir = 'gridOutput/localJobs/'+fileTag
+    #this_output_tag = '...'+outputTag
 
-    command = 'runMiniTree  -inFile '+file+' -outputTag '+this_output_tag+' -submitDir '+submit_dir+' -configName '+config_name
+    command = 'runMiniTree  --file '+file+' --submitDir '+submit_dir+' --configName '+config_name
+    print command
+    #command = 'runMiniTree  -inFile '+file+' -outputTag '+this_output_tag+' -submitDir '+submit_dir+' -configName '+config_name
 
     if not test:
       res = submit_local_job(command, logFile)
@@ -50,6 +50,16 @@ def main():
   wait_all(pids, logFiles)
   for f in logFiles:
     f.close()
+
+  ## Now collect output ##
+  if not os.path.exists("gridOutput/histOutput"):
+    os.makedirs('gridOutput/histOutput')
+
+
+  print 'Moving files to gridOutput/histOutput'
+  outDirs = glob.glob('gridOutput/localJobs/*')
+  for outDir in outDirs:
+    shutil.move( outDir+'/hist-output.root', 'gridOutput/histOutput/hists_'+os.path.basename(outDir)+'.root' )
 
 
 def submit_local_job(exec_sequence, logfilename):
