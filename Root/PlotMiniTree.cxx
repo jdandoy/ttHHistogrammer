@@ -63,6 +63,9 @@ PlotMiniTree :: PlotMiniTree () :
   m_debug = false;
   m_bTagWP = -0.4434;
   m_trigger = "";
+  m_isMC = true;
+  m_XSWeight = 1.0;
+  m_mcChannelNumber = "";
 }
 
 
@@ -84,29 +87,47 @@ EL::StatusCode  PlotMiniTree :: configure ()
   m_trigger                  = config->GetValue("Trigger" ,        m_trigger.c_str() );
 
 
-  PlotMiniTree::Selection *selection_4j2b = new PlotMiniTree::Selection( "sel_4j_2b", ">= 4 jets, >= 2 b-jets" );
-  selection_4j2b->lepNum = 1;
-  selection_4j2b->jetNum = 4;
-  selection_4j2b->bJetNum = 2;
-  selections.push_back( selection_4j2b );
+  PlotMiniTree::Selection *selection_mu_4j2b = new PlotMiniTree::Selection( "sel_mu_4j_2b", "1 Muon, >= 4 jets, >= 2 b-jets" );
+  selection_mu_4j2b->elNum = 0;
+  selection_mu_4j2b->muNum = 1;
+  selection_mu_4j2b->jetNum = 4;
+  selection_mu_4j2b->bJetNum = 2;
+  selections.push_back( selection_mu_4j2b );
 
-  PlotMiniTree::Selection *selection_4j3b = new PlotMiniTree::Selection( "sel_4j_3b", ">= 4 jets, >= 3 b-jets" );
-  selection_4j3b->lepNum = 1;
-  selection_4j3b->jetNum = 4;
-  selection_4j3b->bJetNum = 3;
-  selections.push_back( selection_4j3b );
+  PlotMiniTree::Selection *selection_mu_4j3b = new PlotMiniTree::Selection( "sel_mu_4j_3b", "1 Muon, >= 4 jets, >= 3 b-jets" );
+  selection_mu_4j3b->elNum = 0;
+  selection_mu_4j3b->muNum = 1;
+  selection_mu_4j3b->jetNum = 4;
+  selection_mu_4j3b->bJetNum = 3;
+  selections.push_back( selection_mu_4j3b );
 
-  PlotMiniTree::Selection *selection_4j4b = new PlotMiniTree::Selection( "sel_4j_4b", ">= 4 jets, >= 4 b-jets" );
-  selection_4j4b->lepNum = 1;
-  selection_4j4b->jetNum = 4;
-  selection_4j4b->bJetNum = 4;
-  selections.push_back( selection_4j4b );
+  PlotMiniTree::Selection *selection_mu_4j4b = new PlotMiniTree::Selection( "sel_mu_4j_4b", "1 Muon, >= 4 jets, >= 4 b-jets" );
+  selection_mu_4j4b->elNum = 0;
+  selection_mu_4j4b->muNum = 1;
+  selection_mu_4j4b->jetNum = 4;
+  selection_mu_4j4b->bJetNum = 4;
+  selections.push_back( selection_mu_4j4b );
 
-//  PlotMiniTree::Selection *selection_6j2b = new PlotMiniTree::Selection( "sel_6j_2b", ">= 6 jets, >= 2 b-jets" );
-//  selection_6j2b->lepNum = 1;
-//  selection_6j2b->jetNum = 6;
-//  selection_6j2b->bJetNum = 2;
-//  selections.push_back( selection_6j2b );
+  PlotMiniTree::Selection *selection_el_4j2b = new PlotMiniTree::Selection( "sel_el_4j_2b", "1 Electron, >= 4 jets, >= 2 b-jets" );
+  selection_el_4j2b->elNum = 1;
+  selection_el_4j2b->muNum = 0;
+  selection_el_4j2b->jetNum = 4;
+  selection_el_4j2b->bJetNum = 2;
+  selections.push_back( selection_el_4j2b );
+
+  PlotMiniTree::Selection *selection_el_4j3b = new PlotMiniTree::Selection( "sel_el_4j_3b", "1 Electron, >= 4 jets, >= 3 b-jets" );
+  selection_el_4j3b->elNum = 1;
+  selection_el_4j3b->muNum = 0;
+  selection_el_4j3b->jetNum = 4;
+  selection_el_4j3b->bJetNum = 3;
+  selections.push_back( selection_el_4j3b );
+
+  PlotMiniTree::Selection *selection_el_4j4b = new PlotMiniTree::Selection( "sel_el_4j_4b", "1 Electron, >= 4 jets, >= 4 b-jets" );
+  selection_el_4j4b->elNum = 1;
+  selection_el_4j4b->muNum = 0;
+  selection_el_4j4b->jetNum = 4;
+  selection_el_4j4b->bJetNum = 4;
+  selections.push_back( selection_el_4j4b );
 
   // Save triggers to use
   std::stringstream ss(m_trigger);
@@ -167,20 +188,20 @@ EL::StatusCode PlotMiniTree :: histInitialize ()
     outDir = selections.at(iS)->name+"/";
 
     // Electrons //
-    h_el_pt_all.push_back( HM->book(outDir, "h_el_pt_all", "P_{T} of All Electrons (GeV)", 100, 0, 300.) );
-    h_el_eta_all.push_back( HM->book( outDir,"h_el_eta_all", "#Eta of All Electrons", 100, -4., 4.) );
-    h_el_phi_all.push_back( HM->book( outDir,"h_el_phi_all", "#Phi of All Electrons", 100, -3.14, 3.14) );
-    h_el_e_all.push_back( HM->book( outDir,"h_el_e_all", "Energy of All Electrons (GeV)", 100, 0, 300.) );
+    h_el_pt_all.push_back( HM->book(outDir, "h_el_pt_all", "P_{T} of All Electrons (GeV)", 50, 0, 300.) );
+    h_el_eta_all.push_back( HM->book( outDir,"h_el_eta_all", "#Eta of All Electrons", 50, -4., 4.) );
+    h_el_phi_all.push_back( HM->book( outDir,"h_el_phi_all", "#Phi of All Electrons", 50, -3.14, 3.14) );
+    h_el_e_all.push_back( HM->book( outDir,"h_el_e_all", "Energy of All Electrons (GeV)", 50, 0, 300.) );
 
     vector<TH1F*> vh_el_pt_tmp;
     vector<TH1F*> vh_el_eta_tmp;
     vector<TH1F*> vh_el_phi_tmp;
     vector<TH1F*> vh_el_e_tmp;
     for(unsigned int iE=0; iE < numHistElectrons; ++iE){
-      vh_el_pt_tmp.push_back( HM->book( outDir, ("h_el_pt_"+to_string(iE)).c_str(),  ("P_{T} of Electron "+to_string(iE)+" (GeV)").c_str(), 100, 0, 300.) );
-      vh_el_eta_tmp.push_back( HM->book( outDir, ("h_el_eta_"+to_string(iE)).c_str(), ("#Eta of Electron "+to_string(iE)).c_str(), 100, -4, 4) );
-      vh_el_phi_tmp.push_back( HM->book( outDir, ("h_el_phi_"+to_string(iE)).c_str(), ("#Phi of Electron "+to_string(iE)).c_str(), 100, -3.14, 3.14) );
-      vh_el_e_tmp.push_back( HM->book( outDir, ("h_el_e_"+to_string(iE)).c_str(),   ("Energy of Electron "+to_string(iE)+" (GeV)").c_str(), 100, 0, 300.) );
+      vh_el_pt_tmp.push_back( HM->book( outDir, ("h_el_pt_"+to_string(iE)).c_str(),  ("P_{T} of Electron "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
+      vh_el_eta_tmp.push_back( HM->book( outDir, ("h_el_eta_"+to_string(iE)).c_str(), ("#Eta of Electron "+to_string(iE)).c_str(), 50, -4, 4) );
+      vh_el_phi_tmp.push_back( HM->book( outDir, ("h_el_phi_"+to_string(iE)).c_str(), ("#Phi of Electron "+to_string(iE)).c_str(), 50, -3.14, 3.14) );
+      vh_el_e_tmp.push_back( HM->book( outDir, ("h_el_e_"+to_string(iE)).c_str(),   ("Energy of Electron "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
     }
     vh_el_pt.push_back( vh_el_pt_tmp );
     vh_el_eta.push_back( vh_el_eta_tmp );
@@ -189,20 +210,20 @@ EL::StatusCode PlotMiniTree :: histInitialize ()
 
 
     // Muons //
-    h_mu_pt_all.push_back( HM->book(outDir, "h_mu_pt_all", "P_{T} of All Muons", 100, 0, 300.) );
-    h_mu_eta_all.push_back( HM->book( outDir,"h_mu_eta_all", "#Eta of All Muons", 100, -4., 4.) );
-    h_mu_phi_all.push_back( HM->book( outDir,"h_mu_phi_all", "#Phi of All Muons", 100, -3.14, 3.14) );
-    h_mu_e_all.push_back( HM->book( outDir,"h_mu_e_all", "Energy of All Muons", 100, 0, 300.) );
+    h_mu_pt_all.push_back( HM->book(outDir, "h_mu_pt_all", "P_{T} of All Muons", 50, 0, 300.) );
+    h_mu_eta_all.push_back( HM->book( outDir,"h_mu_eta_all", "#Eta of All Muons", 50, -4., 4.) );
+    h_mu_phi_all.push_back( HM->book( outDir,"h_mu_phi_all", "#Phi of All Muons", 50, -3.14, 3.14) );
+    h_mu_e_all.push_back( HM->book( outDir,"h_mu_e_all", "Energy of All Muons", 50, 0, 300.) );
 
     vector<TH1F*> vh_mu_pt_tmp;
     vector<TH1F*> vh_mu_eta_tmp;
     vector<TH1F*> vh_mu_phi_tmp;
     vector<TH1F*> vh_mu_e_tmp;
     for(unsigned int iE=0; iE < numHistMuons; ++iE){
-      vh_mu_pt_tmp.push_back( HM->book( outDir, ("h_mu_pt_"+to_string(iE)).c_str(),  ("P_{T} of Muon "+to_string(iE)+" (GeV)").c_str(), 100, 0, 300.) );
-      vh_mu_eta_tmp.push_back( HM->book( outDir, ("h_mu_eta_"+to_string(iE)).c_str(), ("#Eta of Muon "+to_string(iE)).c_str(), 100, -4, 4) );
-      vh_mu_phi_tmp.push_back( HM->book( outDir, ("h_mu_phi_"+to_string(iE)).c_str(), ("#Phi of Muon "+to_string(iE)).c_str(), 100, -3.14, 3.14) );
-      vh_mu_e_tmp.push_back( HM->book( outDir, ("h_mu_e_"+to_string(iE)).c_str(),   ("Energy of Muon "+to_string(iE)+" (GeV)").c_str(), 100, 0, 300.) );
+      vh_mu_pt_tmp.push_back( HM->book( outDir, ("h_mu_pt_"+to_string(iE)).c_str(),  ("P_{T} of Muon "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
+      vh_mu_eta_tmp.push_back( HM->book( outDir, ("h_mu_eta_"+to_string(iE)).c_str(), ("#Eta of Muon "+to_string(iE)).c_str(), 50, -4, 4) );
+      vh_mu_phi_tmp.push_back( HM->book( outDir, ("h_mu_phi_"+to_string(iE)).c_str(), ("#Phi of Muon "+to_string(iE)).c_str(), 50, -3.14, 3.14) );
+      vh_mu_e_tmp.push_back( HM->book( outDir, ("h_mu_e_"+to_string(iE)).c_str(),   ("Energy of Muon "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
     }
     vh_mu_pt.push_back( vh_mu_pt_tmp );
     vh_mu_eta.push_back( vh_mu_eta_tmp );
@@ -211,12 +232,12 @@ EL::StatusCode PlotMiniTree :: histInitialize ()
 
     // Jets //
     h_jet_n.push_back( HM->book(outDir, "h_jet_n", "Number of Jets", 20, 0, 20.) );
-    h_jet_ht.push_back( HM->book(outDir, "h_jet_ht", "H_{T} of All Jets (GeV)", 100, 0, 300.) );
-    h_jet_pt_all.push_back( HM->book(outDir, "h_jet_pt_all", "P_{T} of All Jets (GeV)", 100, 0, 300.) );
-    h_jet_eta_all.push_back( HM->book( outDir,"h_jet_eta_all", "#Eta of All Jets", 100, -4., 4.) );
-    h_jet_phi_all.push_back( HM->book( outDir,"h_jet_phi_all", "#Phi of All Jets", 100, -3.14, 3.14) );
-    h_jet_e_all.push_back( HM->book( outDir,"h_jet_e_all", "Energy of All Jets (GeV)", 100, 0, 300.) );
-    h_jet_mv2c20_all.push_back( HM->book(outDir, "h_jet_mv2c20_all", "Mv2c20 of All Jets", 100, -1., 1.) );
+    h_jet_ht.push_back( HM->book(outDir, "h_jet_ht", "H_{T} of All Jets (GeV)", 50, 0, 300.) );
+    h_jet_pt_all.push_back( HM->book(outDir, "h_jet_pt_all", "P_{T} of All Jets (GeV)", 50, 0, 300.) );
+    h_jet_eta_all.push_back( HM->book( outDir,"h_jet_eta_all", "#Eta of All Jets", 50, -4., 4.) );
+    h_jet_phi_all.push_back( HM->book( outDir,"h_jet_phi_all", "#Phi of All Jets", 50, -3.14, 3.14) );
+    h_jet_e_all.push_back( HM->book( outDir,"h_jet_e_all", "Energy of All Jets (GeV)", 50, 0, 300.) );
+    h_jet_mv2c20_all.push_back( HM->book(outDir, "h_jet_mv2c20_all", "Mv2c20 of All Jets", 50, -1., 1.) );
 
     vector<TH1F*> vh_jet_pt_tmp;
     vector<TH1F*> vh_jet_eta_tmp;
@@ -224,11 +245,11 @@ EL::StatusCode PlotMiniTree :: histInitialize ()
     vector<TH1F*> vh_jet_e_tmp;
     vector<TH1F*> vh_jet_mv2c20_tmp;
     for(unsigned int iE=0; iE < numHistJets; ++iE){
-      vh_jet_pt_tmp.push_back( HM->book( outDir, ("h_jet_pt_"+to_string(iE)).c_str(),  ("P_{T} of Jet "+to_string(iE)+" (GeV)").c_str(), 100, 0, 300.) );
-      vh_jet_eta_tmp.push_back( HM->book( outDir, ("h_jet_eta_"+to_string(iE)).c_str(), ("#Eta of Jet "+to_string(iE)).c_str(), 100, -4, 4) );
-      vh_jet_phi_tmp.push_back( HM->book( outDir, ("h_jet_phi_"+to_string(iE)).c_str(), ("#Phi of Jet "+to_string(iE)).c_str(), 100, -3.14, 3.14) );
-      vh_jet_e_tmp.push_back( HM->book( outDir, ("h_jet_e_"+to_string(iE)).c_str(),   ("Energy of Jet "+to_string(iE)+" (GeV)").c_str(), 100, 0, 300.) );
-      vh_jet_mv2c20_tmp.push_back( HM->book( outDir, ("h_jet_mv2c20_"+to_string(iE)).c_str(),   ("Mv2c20 of Jet "+to_string(iE)).c_str(), 100, -1., 1.) );
+      vh_jet_pt_tmp.push_back( HM->book( outDir, ("h_jet_pt_"+to_string(iE)).c_str(),  ("P_{T} of Jet "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
+      vh_jet_eta_tmp.push_back( HM->book( outDir, ("h_jet_eta_"+to_string(iE)).c_str(), ("#Eta of Jet "+to_string(iE)).c_str(), 50, -4, 4) );
+      vh_jet_phi_tmp.push_back( HM->book( outDir, ("h_jet_phi_"+to_string(iE)).c_str(), ("#Phi of Jet "+to_string(iE)).c_str(), 50, -3.14, 3.14) );
+      vh_jet_e_tmp.push_back( HM->book( outDir, ("h_jet_e_"+to_string(iE)).c_str(),   ("Energy of Jet "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
+      vh_jet_mv2c20_tmp.push_back( HM->book( outDir, ("h_jet_mv2c20_"+to_string(iE)).c_str(),   ("Mv2c20 of Jet "+to_string(iE)).c_str(), 50, -1., 1.) );
     }
     vh_jet_pt.push_back( vh_jet_pt_tmp );
     vh_jet_eta.push_back( vh_jet_eta_tmp );
@@ -238,12 +259,12 @@ EL::StatusCode PlotMiniTree :: histInitialize ()
 
     // B-Jets //
     h_bjet_n.push_back( HM->book(outDir, "h_bjet_n", "Number of B-Jets", 20, 0, 20.) );
-    h_bjet_ht.push_back( HM->book(outDir, "h_bjet_ht", "H_{T} of All B-Jets (GeV)", 100, 0, 300.) );
-    h_bjet_pt_all.push_back( HM->book(outDir, "h_bjet_pt_all", "P_{T} of All B-Jets (GeV)", 100, 0, 300.) );
-    h_bjet_eta_all.push_back( HM->book( outDir,"h_bjet_eta_all", "#Eta of All B-Jets", 100, -4., 4.) );
-    h_bjet_phi_all.push_back( HM->book( outDir,"h_bjet_phi_all", "#Phi of All B-Jets", 100, -3.14, 3.14) );
-    h_bjet_e_all.push_back( HM->book( outDir,"h_bjet_e_all", "Energy of All B-Jets (GeV)", 100, 0, 300.) );
-    h_bjet_mv2c20_all.push_back( HM->book(outDir, "h_bjet_mv2c20_all", "Mv2c20 of All B-Jets", 100, -1., 1.) );
+    h_bjet_ht.push_back( HM->book(outDir, "h_bjet_ht", "H_{T} of All B-Jets (GeV)", 50, 0, 300.) );
+    h_bjet_pt_all.push_back( HM->book(outDir, "h_bjet_pt_all", "P_{T} of All B-Jets (GeV)", 50, 0, 300.) );
+    h_bjet_eta_all.push_back( HM->book( outDir,"h_bjet_eta_all", "#Eta of All B-Jets", 50, -4., 4.) );
+    h_bjet_phi_all.push_back( HM->book( outDir,"h_bjet_phi_all", "#Phi of All B-Jets", 50, -3.14, 3.14) );
+    h_bjet_e_all.push_back( HM->book( outDir,"h_bjet_e_all", "Energy of All B-Jets (GeV)", 50, 0, 300.) );
+    h_bjet_mv2c20_all.push_back( HM->book(outDir, "h_bjet_mv2c20_all", "Mv2c20 of All B-Jets", 50, -1., 1.) );
 
     vector<TH1F*> vh_bjet_pt_tmp;
     vector<TH1F*> vh_bjet_eta_tmp;
@@ -251,11 +272,11 @@ EL::StatusCode PlotMiniTree :: histInitialize ()
     vector<TH1F*> vh_bjet_e_tmp;
     vector<TH1F*> vh_bjet_mv2c20_tmp;
     for(unsigned int iE=0; iE < numHistJets; ++iE){
-      vh_bjet_pt_tmp.push_back( HM->book( outDir, ("h_bjet_pt_"+to_string(iE)).c_str(),  ("P_{T} of B-Jet "+to_string(iE)+" (GeV)").c_str(), 100, 0, 300.) );
-      vh_bjet_eta_tmp.push_back( HM->book( outDir, ("h_bjet_eta_"+to_string(iE)).c_str(), ("#Eta of B-Jet "+to_string(iE)).c_str(), 100, -4, 4) );
-      vh_bjet_phi_tmp.push_back( HM->book( outDir, ("h_bjet_phi_"+to_string(iE)).c_str(), ("#Phi of B-Jet "+to_string(iE)).c_str(), 100, -3.14, 3.14) );
-      vh_bjet_e_tmp.push_back( HM->book( outDir, ("h_bjet_e_"+to_string(iE)).c_str(),   ("Energy of B-Jet "+to_string(iE)+" (GeV)").c_str(), 100, 0, 300.) );
-      vh_bjet_mv2c20_tmp.push_back( HM->book( outDir, ("h_bjet_mv2c20_"+to_string(iE)).c_str(),   ("Mv2c20 of B-Jet "+to_string(iE)).c_str(), 100, -1., 1.) );
+      vh_bjet_pt_tmp.push_back( HM->book( outDir, ("h_bjet_pt_"+to_string(iE)).c_str(),  ("P_{T} of B-Jet "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
+      vh_bjet_eta_tmp.push_back( HM->book( outDir, ("h_bjet_eta_"+to_string(iE)).c_str(), ("#Eta of B-Jet "+to_string(iE)).c_str(), 50, -4, 4) );
+      vh_bjet_phi_tmp.push_back( HM->book( outDir, ("h_bjet_phi_"+to_string(iE)).c_str(), ("#Phi of B-Jet "+to_string(iE)).c_str(), 50, -3.14, 3.14) );
+      vh_bjet_e_tmp.push_back( HM->book( outDir, ("h_bjet_e_"+to_string(iE)).c_str(),   ("Energy of B-Jet "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
+      vh_bjet_mv2c20_tmp.push_back( HM->book( outDir, ("h_bjet_mv2c20_"+to_string(iE)).c_str(),   ("Mv2c20 of B-Jet "+to_string(iE)).c_str(), 50, -1., 1.) );
     }
     vh_bjet_pt.push_back( vh_bjet_pt_tmp );
     vh_bjet_eta.push_back( vh_bjet_eta_tmp );
@@ -264,8 +285,8 @@ EL::StatusCode PlotMiniTree :: histInitialize ()
     vh_bjet_mv2c20.push_back( vh_bjet_mv2c20_tmp );
 
     // Others //
-    h_met.push_back( HM->book(outDir, "h_met", "MET (GeV)", 100, 0, 300.) );
-    h_ht_all.push_back( HM->book(outDir, "h_ht_all", "H_{T} of All Jets + Lepton + MET (GeV)", 100, 0, 300.) );
+    h_met.push_back( HM->book(outDir, "h_met", "MET (GeV)", 50, 0, 300.) );
+    h_ht_all.push_back( HM->book(outDir, "h_ht_all", "H_{T} of All Jets + Lepton + MET (GeV)", 50, 0, 300.) );
 
   }// for each selection
 
@@ -292,7 +313,51 @@ EL::StatusCode PlotMiniTree :: changeInput (bool firstFile)
   // D3PDReader or a similar service this method is not needed.
 
 //  if( m_debug)  Info("changeInput()", "Loading Cutflows \n");
-//  TFile* inputFile = wk()->inputFile();
+  TFile* inputFile = wk()->inputFile();
+  std::string inputFileName = inputFile->GetName();
+  //Remove directory structure if present
+  const size_t iLastSlash = inputFileName.find_last_of("\\/");
+  if (std::string::npos != iLastSlash)
+  {
+      inputFileName.erase(0, iLastSlash + 1);
+  }
+  cout << "!!!!!!!!!!!!!!!!!!!!!!!filename is " << inputFileName << endl;
+  if (inputFileName.find("data15") != std::string::npos){
+    Info("changeInput()","Setting to Data");
+    m_isMC = false;
+  } else {
+    Info("changeInput()","Setting to MC");
+    m_isMC = true;
+
+    // Get MC number from string
+    std::stringstream ss(inputFileName);
+    std::string thisField;
+    int fieldCount = 0;
+    while (std::getline(ss, thisField, '.')) {
+      if (fieldCount == 3){
+        m_mcChannelNumber = thisField;
+        m_mcChannelNumber.erase(0, m_mcChannelNumber.find_first_not_of('0')); //Remove leading zeros
+        break;
+      }else{
+        fieldCount++;
+      }
+    } //while get fields
+
+    getLumiWeights(); //retrieve XS+FiltEff weights for MC
+
+    //Get totalEventsWeighted
+    TTree* eventNumTree = (TTree*) inputFile->Get("sumWeights");
+    float totalEventsWeighted = 0;
+    eventNumTree->SetBranchAddress("totalEventsWeighted", &totalEventsWeighted);
+    int numTreeEntries = eventNumTree->GetEntries();
+    m_totalNumEvents = 0;
+    for (int iT = 0; iT < numTreeEntries; ++iT) {
+      eventNumTree->GetEntry(iT);
+      m_totalNumEvents += totalEventsWeighted;
+    }
+  Info("changeInput()", "From sumWeights TTree, found totalNumber of events %s", m_totalNumEvents);
+  }// if MC
+
 //  TIter next(inputFile->GetListOfKeys());
 //  TKey *key;
 //  while ((key = (TKey*)next())) {
@@ -309,10 +374,12 @@ EL::StatusCode PlotMiniTree :: changeInput (bool firstFile)
   TTree *tree = wk()->tree();
   tree->SetBranchStatus ("*", 0);
 
-  tree->SetBranchStatus("weight_mc", 1);        tree->SetBranchAddress( "weight_mc", &weight_mc );
-  tree->SetBranchStatus("weight_pileup", 1);     tree->SetBranchAddress( "weight_pileup", &weight_pileup);
-  tree->SetBranchStatus("weight_bTagSF", 1);     tree->SetBranchAddress( "weight_bTagSF", &weight_bTagSF);
-  tree->SetBranchStatus("weight_leptonSF", 1);   tree->SetBranchAddress( "weight_leptonSF", &weight_leptonSF);
+  if(m_isMC){
+    tree->SetBranchStatus("weight_mc", 1);        tree->SetBranchAddress( "weight_mc", &weight_mc );
+    tree->SetBranchStatus("weight_pileup", 1);     tree->SetBranchAddress( "weight_pileup", &weight_pileup);
+    tree->SetBranchStatus("weight_bTagSF", 1);     tree->SetBranchAddress( "weight_bTagSF", &weight_bTagSF);
+    tree->SetBranchStatus("weight_leptonSF", 1);   tree->SetBranchAddress( "weight_leptonSF", &weight_leptonSF);
+  }
 
   tree->SetBranchStatus("el_pt", 1);   tree->SetBranchAddress( "el_pt", &el_pt);
   tree->SetBranchStatus("el_eta", 1);  tree->SetBranchAddress( "el_eta", &el_eta);
@@ -387,12 +454,8 @@ EL::StatusCode PlotMiniTree :: execute ()
 
   if( (m_eventCounter%1000) == 0) Info("execute()", "Event number %i", m_eventCounter);
 
-  weight_mc = weight_pileup = weight_leptonSF = weight_bTagSF = 1.; //Set ahead of time for data
+  //weight_mc = weight_pileup = weight_leptonSF = weight_bTagSF = 1.; //Set ahead of time for data
   wk()->tree()->GetEntry (wk()->treeEntry());
-
-  float eventWeight = 1.;
-  eventWeight *= weight_mc*weight_pileup*weight_leptonSF*weight_bTagSF;
-  cout << "eventWeight " << eventWeight << " " << weight_mc << " " << weight_pileup << " " << weight_leptonSF << " " << weight_bTagSF << endl;
 
 
   if( m_debug)  Info("execute()", "Starting execute() \n");
@@ -412,6 +475,10 @@ EL::StatusCode PlotMiniTree :: execute ()
     return EL::StatusCode::SUCCESS;
   }
 
+  float eventWeight = 1.;
+  if(m_isMC)
+    eventWeight *= weight_mc*weight_pileup*weight_leptonSF*weight_bTagSF*m_XSWeight/m_totalNumEvents;
+
   // Start different selections
   for(unsigned int iS=0; iS < selections.size(); ++iS){
 
@@ -420,7 +487,9 @@ EL::StatusCode PlotMiniTree :: execute ()
     if (jet_pt->size() != selections.at(iS)->jetNum)
       continue;
 
-    if (el_pt->size() + mu_pt->size() != selections.at(iS)->lepNum)
+    if (el_pt->size() != selections.at(iS)->elNum)
+      continue;
+    if (mu_pt->size() != selections.at(iS)->muNum)
       continue;
 
     vector<int> BJetIndicies;
@@ -571,6 +640,43 @@ EL::StatusCode PlotMiniTree :: histFinalize ()
   // outputs have been merged.  This is different from finalize() in
   // that it gets called on all worker nodes regardless of whether
   // they processed input events.
+  return EL::StatusCode::SUCCESS;
+}
+
+//This grabs cross section and acceptance from XS_Samples.txt
+EL::StatusCode PlotMiniTree :: getLumiWeights() {
+
+  m_XSWeight = 1.;
+  if(!m_isMC){
+    return EL::StatusCode::SUCCESS;
+  }
+
+  ifstream fileIn(  gSystem->ExpandPathName("$ROOTCOREBIN/data/ttHPlotter/XS_Samples.txt") );
+  std::string line;
+  std::string subStr;
+
+
+  bool foundFile = false;
+  float thisXS;
+  float thisFiltEff;
+  while (getline(fileIn, line)){
+    istringstream iss(line);
+    iss >> subStr;
+    if (subStr.find(m_mcChannelNumber) != string::npos){
+      foundFile = true;
+      iss >> subStr;
+      sscanf(subStr.c_str(), "%e", &thisXS);
+      iss >> subStr;
+      sscanf(subStr.c_str(), "%e", &thisFiltEff);
+      cout << "Setting xs / acceptance " << thisXS << ":" << thisFiltEff << endl;
+      m_XSWeight = thisXS*thisFiltEff;
+      continue;
+    }
+  }
+  if( !foundFile ){
+    cerr << "ERROR: Could not find proper file information for file number " << m_mcChannelNumber << endl;
+    return EL::StatusCode::FAILURE;
+  }
   return EL::StatusCode::SUCCESS;
 }
 

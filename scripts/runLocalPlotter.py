@@ -16,7 +16,7 @@ def main():
   config_name = "$ROOTCOREBIN/data/ttHPlotter/ttHPlotter.config"
 
   fileDir = '/home/jdandoy/Documents/ttHFW/gridOutput/output/'
-  inputTag = 'Main'
+  inputTag = ''
   outputTag = 'test'
 
   timestamp = time.strftime("_%Y%m%d")
@@ -24,14 +24,16 @@ def main():
 
   files = glob.glob(fileDir+'/*'+inputTag+'*.root')
 
-  pids, logFiles = [], []
-  NCORES = 6
 
   if not os.path.exists('logs/'+outputTag+'/'):
     os.makedirs('logs/'+outputTag+'/')
 
+  pids, logFiles = [], []
+  NCORES = 6
   ## Submit histogramming jobs ##
   for file in files:
+    if len(pids) >= NCORES:
+      wait_completion(pids, logFiles)
 
     fileTag = os.path.basename(file)[:-5] #remove path and .root
     logFile='logs/'+outputTag+'/ttHPlotter_{0}'.format(fileTag)+'.log'

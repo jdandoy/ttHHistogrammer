@@ -14,7 +14,7 @@ import ROOT
 parser = argparse.ArgumentParser(description="%prog [options]", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-b", dest='b', action='store_true', default=False, help="Batch mode for PyRoot")
 parser.add_argument("-v", dest='v', action='store_true', default=False, help="Verbose mode for debugging")
-parser.add_argument("--plotDir", dest='plotDir', default="sel_4j_2b", help="TDirectory to search for plots in ROOT file.  By default no directory")
+parser.add_argument("--plotDir", dest='plotDir', default="sel_mu_4j_2b", help="TDirectory to search for plots in ROOT file.  By default no directory")
 
 
 parser.add_argument("--plotPartial", dest='plotPartial', action='store_true', default=False, help="Plot all histograms, even if some sample types do not contain the histogram (i.e. truth for data)")
@@ -232,6 +232,9 @@ def getHistNames( inFileNames ):
     inFile = ROOT.TFile(inFileName, 'READ')
     if len(args.plotDir) > 0:
       plotDir = inFile.Get(args.plotDir)
+      if not plotDir:
+        print "ERROR, Couldn't find TDirectory", args.plotDir, "in", inFileName
+        exit(1)
     else:
       plotDir = inFile
     keys = plotDir.GetListOfKeys()
@@ -797,7 +800,8 @@ def getRatioObjects(c0, logX, logY):
 ####################################################
 
 def getSqrtSLumiText( lumi ):
-  sqrtSLumiText = "#sqrt{s}=13 TeV, 6.7 pb^{-1}"
+  sqrtSLumiText = "#sqrt{s}=13 TeV"
+  #sqrtSLumiText = "#sqrt{s}=13 TeV, 6.7 pb^{-1}"
   return sqrtSLumiText
 
 def getCombinedStack( stackHist ):
@@ -809,6 +813,7 @@ def getCombinedStack( stackHist ):
   return combinedHist
 
 if __name__ == "__main__":
+  args.outputTag = args.outputTag+'_'+args.plotDir
   SampleNames, SampleTypes, HistNames, Hists = getPlotList()
   plotAll( SampleNames, SampleTypes, HistNames, Hists )
 

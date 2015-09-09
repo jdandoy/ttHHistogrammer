@@ -42,22 +42,33 @@ class PlotMiniTree : public xAH::Algorithm
       string displayName;
       unsigned int jetNum;
       unsigned int bJetNum;
-      unsigned int lepNum;
+      unsigned int elNum;
+      unsigned int muNum;
 
       Selection(std::string thisName, std::string thisDisplayName = ""){
         name = thisName;
         displayName = thisDisplayName;
-        jetNum = -1;
-        bJetNum = -1;
-        lepNum = -1;
+        jetNum = 0;
+        bJetNum = 0;
+        elNum = 0;
+        muNum = 0;
       }
     };
 
   private:
 
+
+    bool m_isMC; //!
+    std::string m_mcChannelNumber; //!
+    float m_XSWeight; //!
+    float m_totalNumEvents; //!
+
     // Config file options //
     float m_bTagWP;
     std::string m_trigger;
+
+
+
 
     // Histograms //
 // !H! Define histogram containers here
@@ -168,6 +179,8 @@ class PlotMiniTree : public xAH::Algorithm
 public:
   // Tree *myTree; //!
   // TH1 *myHist; //!
+
+  EL::StatusCode getLumiWeights();
 
   // this is a standard constructor
   PlotMiniTree ();
