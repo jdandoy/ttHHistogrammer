@@ -312,8 +312,6 @@ EL::StatusCode HistogramMiniTree :: fileExecute ()
   return EL::StatusCode::SUCCESS;
 }
 
-
-
 // !B! Connect branch variable with tree here
 EL::StatusCode HistogramMiniTree :: changeInput (bool firstFile)
 {

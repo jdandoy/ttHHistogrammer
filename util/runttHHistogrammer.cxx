@@ -1,14 +1,14 @@
 //////////////////////////////////////////////////////////////////
 // runtthPlotter.cxx                                            //
 //////////////////////////////////////////////////////////////////
-// Control script for the PlotMiniTree EventLoop.               //
+// Control script for the HistogramMiniTree EventLoop.               //
 // Selects general running options and controls grid submission.//
 //////////////////////////////////////////////////////////////////
 // Jeff.Dandoy@cern.ch , Nedaa.Asbah@cern.ch                    //
 //////////////////////////////////////////////////////////////////
 
 #include "EventLoop/Job.h"
-#include "ttHPlotter/PlotMiniTree.h"
+#include "ttHHistogrammer/HistogramMiniTree.h"
 
 #include "xAODAnaHelpers/AnalysisBase.h"
 #include <string>
@@ -30,7 +30,7 @@ int main( int argc, char* argv[] ) {
   //
   // Init various job options
   //
-  std::string configName = "$ROOTCOREBIN/data/ttHPlotter/ttHPlotter.config";
+  std::string configName = "$ROOTCOREBIN/data/ttHHistogrammer/ttHHistogrammer.config";
   std::string treeName   = "nominal";
   std::string submitDir  = "submitDir";
   std::string outputName;
@@ -152,37 +152,34 @@ int main( int argc, char* argv[] ) {
       while(std::getline(inFile, containerName) ){
         if (containerName.size() > 1 && containerName.find("#") != 0 ){
           std::cout << "Adding container " << containerName << std::endl;
-	  //Get full path of file
-	  char fullPath[300];
-	  realpath( containerName.c_str(), fullPath );
-	  std::string thisPath = fullPath;
-	  //split into fileName and directory two levels above file
-	  std::string fileName = thisPath.substr(containerName.find_last_of("/")+1);
-	  thisPath = thisPath.substr(0, thisPath.find_last_of("/"));
-	  thisPath = thisPath.substr(0, thisPath.find_last_of("/"));
-	  std::cout << "path and filename are " << thisPath << " and " << fileName << std::endl;
+	        //Get full path of file
+	        char fullPath[300];
+	        realpath( containerName.c_str(), fullPath );
+	        std::string thisPath = fullPath;
+	        //split into fileName and directory two levels above file
+	        std::string fileName = thisPath.substr(containerName.find_last_of("/")+1);
+	        thisPath = thisPath.substr(0, thisPath.find_last_of("/"));
+	        thisPath = thisPath.substr(0, thisPath.find_last_of("/"));
+	        std::cout << "path and filename are " << thisPath << " and " << fileName << std::endl;
 
-	  SH::DiskListLocal list (thisPath);
-	  //SH::SampleHandler sh_tmp;
-	  //SH::scanDir (sh_tmp, list);
-	  //sh.add( sh_tmp.findByName, ("*"+fileName).c_str() );
-	  SH::scanDir (sh, list, fileName); // specifying one particular file for testing
+	        SH::DiskListLocal list (thisPath);
+	        SH::scanDir (sh, list, fileName); // specifying one particular file for testing
         }
       }
 
     }else{ //It is a single root file to run on
-    //Get full path of file
-    char fullPath[300];
-    realpath( samplePath.c_str(), fullPath );
-    std::string thisPath = fullPath;
-    //split into fileName and directory two levels above file
-    std::string fileName = thisPath.substr(thisPath.find_last_of("/")+1);
-    thisPath = thisPath.substr(0, thisPath.find_last_of("/"));
-    thisPath = thisPath.substr(0, thisPath.find_last_of("/"));
+      //Get full path of file
+      char fullPath[300];
+      realpath( samplePath.c_str(), fullPath );
+      std::string thisPath = fullPath;
+      //split into fileName and directory two levels above file
+      std::string fileName = thisPath.substr(thisPath.find_last_of("/")+1);
+      thisPath = thisPath.substr(0, thisPath.find_last_of("/"));
+      thisPath = thisPath.substr(0, thisPath.find_last_of("/"));
 
-    std::cout << "path and file " << thisPath << " and " << fileName << std::endl;
-    SH::DiskListLocal list (thisPath);
-    SH::scanDir (sh, list, fileName); // specifying one particular file for testing
+      std::cout << "path and file " << thisPath << " and " << fileName << std::endl;
+      SH::DiskListLocal list (thisPath);
+      SH::scanDir (sh, list, fileName); // specifying one particular file for testing
 
     }
   }//it's a file
@@ -203,37 +200,24 @@ int main( int argc, char* argv[] ) {
   // To automatically delete submitDir
   job.options()->setDouble(EL::Job::optRemoveSubmitDir, 1);
 
-  //
   //  Set the number of events
-  //
   TEnv* config = new TEnv(gSystem->ExpandPathName( configName.c_str() ));
   int nEvents = config->GetValue("MaxEvent",       -1);
   if(nEvents > 0)
     job.options()->setDouble(EL::Job::optMaxEvents, nEvents);
 
-  //
-  // Now the Event/Objection Selection
-  //
+  // Define the Histogrammer
+  std::string HistogramMiniTreeConfig = configName;
+  HistogramMiniTreeConfig.erase(0, HistogramMiniTreeConfig.find_last_of("/")+1); // correct config name to include $ROOTCOREBIN
+  HistogramMiniTreeConfig = "$ROOTCOREBIN/data/ttHHistogrammer/"+HistogramMiniTreeConfig;
+  HistogramMiniTree* procMiniTree = new HistogramMiniTree();
+  cout << "HistogramMiniTreeConfig is " << HistogramMiniTreeConfig << endl;
+  procMiniTree->setName("ttHHistogrammer")->setConfig( HistogramMiniTreeConfig.c_str() );
 
-
-  //
-  // The Multijet analysis
-  //   (defined in MultijetAlgo base class)
-  std::string PlotMiniTreeConfig = configName;
-  PlotMiniTreeConfig.erase(0, PlotMiniTreeConfig.find_last_of("/")+1); // correct config name to include $ROOTCOREBIN
-  PlotMiniTreeConfig = "$ROOTCOREBIN/data/ttHPlotter/"+PlotMiniTreeConfig;
-  PlotMiniTree* procMiniTree = new PlotMiniTree();
-  cout << "PlotMiniTreeConfig is " << PlotMiniTreeConfig << endl;
-  procMiniTree->setName("ttHPlotter")->setConfig( PlotMiniTreeConfig.c_str() );
-
-  //
   // Add configured algos to event loop job
-  //
   job.algsAdd( procMiniTree );
 
-  //
-  // Submit the job (defined in utils/AnalysisBase.h)
-  //
+  // Submit the job
   submitJob(job, outputName, submitDir, false, false, std::vector<std::string>(), doCondor );
 
   return 0;
