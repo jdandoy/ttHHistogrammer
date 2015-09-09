@@ -1,3 +1,12 @@
+//////////////////////////////////////////////////////////////////
+// runtthPlotter.cxx                                            //
+//////////////////////////////////////////////////////////////////
+// Control script for the PlotMiniTree EventLoop.               //
+// Selects general running options and controls grid submission.//
+//////////////////////////////////////////////////////////////////
+// Jeff.Dandoy@cern.ch , Nedaa.Asbah@cern.ch                    //
+//////////////////////////////////////////////////////////////////
+
 #include "EventLoop/Job.h"
 #include "ttHPlotter/PlotMiniTree.h"
 
@@ -26,11 +35,6 @@ int main( int argc, char* argv[] ) {
   std::string submitDir  = "submitDir";
   std::string outputName;
   bool doCondor          = false;
-
-  //
-  // Set up various job options
-  //  (defined in utils/AnalysisBase.h)
-  //
 
   /////////// Retrieve job arguments //////////////////////////
   std::vector< std::string> options;

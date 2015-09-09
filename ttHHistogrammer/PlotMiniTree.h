@@ -1,5 +1,14 @@
-#ifndef DijetPlotter_PlotMiniTree_H
-#define DijetPlotter_PlotMiniTree_H
+//////////////////////////////////////////////////////////////////
+// HistogramMiniTree.h                                               //
+//////////////////////////////////////////////////////////////////
+// Fairly generic EventLoop for creating histograms from TTrees //
+// Currently optimized for the ttH TTree output                 //
+//////////////////////////////////////////////////////////////////
+// Jeff.Dandoy@cern.ch , Nedaa.Asbah@cern.ch                    //
+//////////////////////////////////////////////////////////////////
+
+#ifndef ttHHistogrammer_HistogramMiniTree_H
+#define ttHHistogrammer_HistogramMiniTree_H
 
 #include <EventLoop/StatusCode.h>
 #include <EventLoop/Algorithm.h>
@@ -25,7 +34,7 @@ using namespace std;
 
 
 
-class PlotMiniTree : public xAH::Algorithm
+class HistogramMiniTree : public xAH::Algorithm
 {
   // put your configuration variables here as public variables.
   // that way they can be set directly from CINT and python.
@@ -183,7 +192,7 @@ public:
   EL::StatusCode getLumiWeights();
 
   // this is a standard constructor
-  PlotMiniTree ();
+  HistogramMiniTree ();
 
   // these are the functions inherited from Algorithm
   virtual EL::StatusCode setupJob (EL::Job& job);
@@ -200,7 +209,7 @@ public:
   virtual EL::StatusCode configure ();
 
   // this is needed to distribute the algorithm to the workers
-  ClassDef(PlotMiniTree, 1);
+  ClassDef(HistogramMiniTree, 1);
 };
 
 #endif

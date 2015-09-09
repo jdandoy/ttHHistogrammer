@@ -1,8 +1,18 @@
 #!/usr/bin/env python
+
+##############################################################
+# plotHistograms.py                                          #
+##############################################################
+# Code for combining, stacking, and plotting histograms      #
+# produced by PlotMiniTree                                   #
+##############################################################
+# Jeff.Dandoy and Nedaa.Asbah                                #
+##############################################################
+
+
 import os, sys, glob, copy, subprocess
 import time
 import argparse
-import plotUtils
 import AtlasStyle
 from collections import defaultdict
 from math import sqrt, log, isnan, isinf, fabs, exp
@@ -186,7 +196,6 @@ def getPlotList():
 def getFileNames( histDir, histFileTags ):
 
 ###
-  #histFileNames = plotUtils.getFileList( histDir, histFileTags )
   thisHistDir = histDir
   thisHistFileTags = histFileTags
   thisHistFileTags.append(".root") #must be root files

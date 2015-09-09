@@ -7,7 +7,7 @@
 
 
 # the name of the package:
-PACKAGE          = ttHPlotter
+PACKAGE          = ttHHistogrammer
 
 # the libraries to link with this one:
 PACKAGE_PRELOAD  =

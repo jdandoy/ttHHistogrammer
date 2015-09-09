@@ -1,9 +1,12 @@
 #!/usr/bin/python
 
-#####################################
-# Submit grid jobs using text files with lists of containers
-# For questions contact Jeff.Dandoy@cern.ch
-#####################################
+##############################################################
+# runLocalPlotter.py                                         #
+##############################################################
+# Submit PlotMinitree jobs locally on a folder of TTrees     #
+##############################################################
+# Jeff.Dandoy and Nedaa.Asbah                                #
+##############################################################
 
 import os, math, sys, glob, subprocess, time, shutil
 
@@ -13,7 +16,7 @@ def main():
     if not os.path.exists("gridOutput/localJobs"):
       os.makedirs('gridOutput/localJobs')
 
-  config_name = "$ROOTCOREBIN/data/ttHPlotter/ttHPlotter.config"
+  config_name = "$ROOTCOREBIN/data/ttHHistogrammer/ttHHistogrammer.config"
 
   fileDir = '/home/jdandoy/Documents/ttHFW/gridOutput/output/'
   inputTag = ''
@@ -36,11 +39,11 @@ def main():
       wait_completion(pids, logFiles)
 
     fileTag = os.path.basename(file)[:-5] #remove path and .root
-    logFile='logs/'+outputTag+'/ttHPlotter_{0}'.format(fileTag)+'.log'
+    logFile='logs/'+outputTag+'/ttHHistogrammer_{0}'.format(fileTag)+'.log'
     submit_dir = 'gridOutput/localJobs/'+fileTag
     #this_output_tag = '...'+outputTag
 
-    command = 'runMiniTree  --file '+file+' --submitDir '+submit_dir+' --configName '+config_name
+    command = 'runttHHistogrammer  --file '+file+' --submitDir '+submit_dir+' --configName '+config_name
     print command
     #command = 'runMiniTree  -inFile '+file+' -outputTag '+this_output_tag+' -submitDir '+submit_dir+' -configName '+config_name
 

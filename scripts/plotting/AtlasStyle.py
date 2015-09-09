@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
-# Python ATLAS Style: Based on ATLAS Style
+##############################################################
+# AtlasStyle.py                                              #
+##############################################################
+# Python ATLAS Style: Based on ATLAS Style                   #
+##############################################################
 
 import ROOT
 import array

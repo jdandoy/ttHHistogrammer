@@ -1,20 +1,13 @@
 #!/usr/bin/env python
 
-##******************************************
-#downloadAndMerge.py
-#download and merge output datasets produced by dijet analysis code on the GRID
+###########################################################
+#downloadAndMerge.py                                      #
+###########################################################
+# download and merge output datasets produced on the GRID #
+###########################################################
+# For further information contact Jeff.Dandoy@cern.ch     #
+###########################################################
 
-#NOTE before starting, set the variables below
-#NOTE just run the script without any parameter to get instruction
-#HOW TO time python -u downloadAndMerge.py dataset
-#NOTE 'dataset' can have wildcards, the matching datasets will be treated independently
-#EXAMPLE time python -u downloadAndMerge.py user.gfacini.*.v06_*.root/
-#
-# For further information contact Jeff.Dandoy@cern.ch
-##******************************************
-
-#------------------------------------------
-#import
 import os, sys, subprocess, glob, shutil
 import argparse
 parser = argparse.ArgumentParser(description="%prog [options]", formatter_class=argparse.ArgumentDefaultsHelpFormatter)

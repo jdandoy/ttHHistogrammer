@@ -1,3 +1,12 @@
+//////////////////////////////////////////////////////////////////
+// HistogramMiniTree.cxx                                             //
+//////////////////////////////////////////////////////////////////
+// Fairly generic EventLoop for creating histograms from TTrees //
+// Currently optimized for the ttH TTree output                 //
+//////////////////////////////////////////////////////////////////
+// Jeff.Dandoy@cern.ch , Nedaa.Asbah@cern.ch                    //
+//////////////////////////////////////////////////////////////////
+
 #include <EventLoop/Job.h>
 #include <EventLoop/Worker.h>
 #include "EventLoop/OutputStream.h"
@@ -6,7 +15,7 @@
 #include "xAODTracking/VertexContainer.h"
 #include <xAODJet/JetContainer.h>
 #include "xAODEventInfo/EventInfo.h"
-#include <ttHPlotter/PlotMiniTree.h>
+#include <ttHHistogrammer/HistogramMiniTree.h>
 #include <xAODAnaHelpers/HelperFunctions.h>
 #include <xAODAnaHelpers/tools/ReturnCheck.h>
 
@@ -26,10 +35,10 @@
 using namespace std;
 
 // this is needed to distribute the algorithm to the workers
-ClassImp(PlotMiniTree)
+ClassImp(HistogramMiniTree)
 
 // !B! Add branch Variable here
-PlotMiniTree :: PlotMiniTree () :
+HistogramMiniTree :: HistogramMiniTree () :
 //  HLT_mu50(0),
   el_pt(0),
   el_eta(0),
@@ -58,7 +67,7 @@ PlotMiniTree :: PlotMiniTree () :
   jet_ip3dsv1(0),
   jet_jvt(0)
 {
-  Info("PlotMiniTree()", "Calling constructor");
+  Info("HistogramMiniTree()", "Calling constructor");
 
   m_debug = false;
   m_bTagWP = -0.4434;
@@ -70,10 +79,10 @@ PlotMiniTree :: PlotMiniTree () :
 
 
 // !S! Add Selections here
-EL::StatusCode  PlotMiniTree :: configure ()
+EL::StatusCode  HistogramMiniTree :: configure ()
 {
   m_configName = gSystem->ExpandPathName( m_configName.c_str() );
-  Info("configure()", "Configuing PlotMiniTree Interface. User configuration read from : %s \n", m_configName.c_str());
+  Info("configure()", "Configuing HistogramMiniTree Interface. User configuration read from : %s \n", m_configName.c_str());
   TEnv* config = new TEnv(m_configName.c_str());
   if( !config ) {
     Error("configure()", "Failed to read config file!");
@@ -87,42 +96,42 @@ EL::StatusCode  PlotMiniTree :: configure ()
   m_trigger                  = config->GetValue("Trigger" ,        m_trigger.c_str() );
 
 
-  PlotMiniTree::Selection *selection_mu_4j2b = new PlotMiniTree::Selection( "sel_mu_4j_2b", "1 Muon, >= 4 jets, >= 2 b-jets" );
+  HistogramMiniTree::Selection *selection_mu_4j2b = new HistogramMiniTree::Selection( "sel_mu_4j_2b", "1 Muon, >= 4 jets, >= 2 b-jets" );
   selection_mu_4j2b->elNum = 0;
   selection_mu_4j2b->muNum = 1;
   selection_mu_4j2b->jetNum = 4;
   selection_mu_4j2b->bJetNum = 2;
   selections.push_back( selection_mu_4j2b );
 
-  PlotMiniTree::Selection *selection_mu_4j3b = new PlotMiniTree::Selection( "sel_mu_4j_3b", "1 Muon, >= 4 jets, >= 3 b-jets" );
+  HistogramMiniTree::Selection *selection_mu_4j3b = new HistogramMiniTree::Selection( "sel_mu_4j_3b", "1 Muon, >= 4 jets, >= 3 b-jets" );
   selection_mu_4j3b->elNum = 0;
   selection_mu_4j3b->muNum = 1;
   selection_mu_4j3b->jetNum = 4;
   selection_mu_4j3b->bJetNum = 3;
   selections.push_back( selection_mu_4j3b );
 
-  PlotMiniTree::Selection *selection_mu_4j4b = new PlotMiniTree::Selection( "sel_mu_4j_4b", "1 Muon, >= 4 jets, >= 4 b-jets" );
+  HistogramMiniTree::Selection *selection_mu_4j4b = new HistogramMiniTree::Selection( "sel_mu_4j_4b", "1 Muon, >= 4 jets, >= 4 b-jets" );
   selection_mu_4j4b->elNum = 0;
   selection_mu_4j4b->muNum = 1;
   selection_mu_4j4b->jetNum = 4;
   selection_mu_4j4b->bJetNum = 4;
   selections.push_back( selection_mu_4j4b );
 
-  PlotMiniTree::Selection *selection_el_4j2b = new PlotMiniTree::Selection( "sel_el_4j_2b", "1 Electron, >= 4 jets, >= 2 b-jets" );
+  HistogramMiniTree::Selection *selection_el_4j2b = new HistogramMiniTree::Selection( "sel_el_4j_2b", "1 Electron, >= 4 jets, >= 2 b-jets" );
   selection_el_4j2b->elNum = 1;
   selection_el_4j2b->muNum = 0;
   selection_el_4j2b->jetNum = 4;
   selection_el_4j2b->bJetNum = 2;
   selections.push_back( selection_el_4j2b );
 
-  PlotMiniTree::Selection *selection_el_4j3b = new PlotMiniTree::Selection( "sel_el_4j_3b", "1 Electron, >= 4 jets, >= 3 b-jets" );
+  HistogramMiniTree::Selection *selection_el_4j3b = new HistogramMiniTree::Selection( "sel_el_4j_3b", "1 Electron, >= 4 jets, >= 3 b-jets" );
   selection_el_4j3b->elNum = 1;
   selection_el_4j3b->muNum = 0;
   selection_el_4j3b->jetNum = 4;
   selection_el_4j3b->bJetNum = 3;
   selections.push_back( selection_el_4j3b );
 
-  PlotMiniTree::Selection *selection_el_4j4b = new PlotMiniTree::Selection( "sel_el_4j_4b", "1 Electron, >= 4 jets, >= 4 b-jets" );
+  HistogramMiniTree::Selection *selection_el_4j4b = new HistogramMiniTree::Selection( "sel_el_4j_4b", "1 Electron, >= 4 jets, >= 4 b-jets" );
   selection_el_4j4b->elNum = 1;
   selection_el_4j4b->muNum = 0;
   selection_el_4j4b->jetNum = 4;
@@ -143,7 +152,7 @@ EL::StatusCode  PlotMiniTree :: configure ()
 }
 
 
-EL::StatusCode PlotMiniTree :: setupJob (EL::Job& job)
+EL::StatusCode HistogramMiniTree :: setupJob (EL::Job& job)
 {
   // Here you put code that sets up the job on the submission object
   // so that it is ready to work with your algorithm, e.g. you can
@@ -158,7 +167,7 @@ EL::StatusCode PlotMiniTree :: setupJob (EL::Job& job)
 
 
 
-EL::StatusCode PlotMiniTree :: histInitialize ()
+EL::StatusCode HistogramMiniTree :: histInitialize ()
 {
   // Here you do everything that needs to be done at the very
   // beginning on each worker node, e.g. create histograms and output
@@ -296,7 +305,7 @@ EL::StatusCode PlotMiniTree :: histInitialize ()
 
 
 
-EL::StatusCode PlotMiniTree :: fileExecute ()
+EL::StatusCode HistogramMiniTree :: fileExecute ()
 {
   // Here you do everything that needs to be done exactly once for every
   // single file, e.g. collect a list of all lumi-blocks processed
@@ -306,7 +315,7 @@ EL::StatusCode PlotMiniTree :: fileExecute ()
 
 
 // !B! Connect branch variable with tree here
-EL::StatusCode PlotMiniTree :: changeInput (bool firstFile)
+EL::StatusCode HistogramMiniTree :: changeInput (bool firstFile)
 {
   // Here you do everything you need to do when we change input files,
   // e.g. resetting branch addresses on trees.  If you are using
@@ -423,7 +432,7 @@ EL::StatusCode PlotMiniTree :: changeInput (bool firstFile)
 
 
 
-EL::StatusCode PlotMiniTree :: initialize ()
+EL::StatusCode HistogramMiniTree :: initialize ()
 {
   // Here you do everything that you need to do after the first input
   // file has been connected and before the first event is processed,
@@ -443,7 +452,7 @@ EL::StatusCode PlotMiniTree :: initialize ()
 }
 
 
-EL::StatusCode PlotMiniTree :: execute ()
+EL::StatusCode HistogramMiniTree :: execute ()
 {
   // Here you do everything that needs to be done on every single
   // event, e.g. read input variables, apply cuts, and fill
@@ -601,7 +610,7 @@ EL::StatusCode PlotMiniTree :: execute ()
 }
 
 
-EL::StatusCode PlotMiniTree :: postExecute ()
+EL::StatusCode HistogramMiniTree :: postExecute ()
 {
   // Here you do everything that needs to be done after the main event
   // processing.  This is typically very rare, particularly in user
@@ -611,7 +620,7 @@ EL::StatusCode PlotMiniTree :: postExecute ()
 
 
 
-EL::StatusCode PlotMiniTree :: finalize ()
+EL::StatusCode HistogramMiniTree :: finalize ()
 {
   // This method is the mirror image of initialize(), meaning it gets
   // called after the last event has been processed on the worker node
@@ -628,7 +637,7 @@ EL::StatusCode PlotMiniTree :: finalize ()
 
 
 
-EL::StatusCode PlotMiniTree :: histFinalize ()
+EL::StatusCode HistogramMiniTree :: histFinalize ()
 {
   // This method is the mirror image of histInitialize(), meaning it
   // gets called after the last event has been processed on the worker
@@ -644,14 +653,14 @@ EL::StatusCode PlotMiniTree :: histFinalize ()
 }
 
 //This grabs cross section and acceptance from XS_Samples.txt
-EL::StatusCode PlotMiniTree :: getLumiWeights() {
+EL::StatusCode HistogramMiniTree :: getLumiWeights() {
 
   m_XSWeight = 1.;
   if(!m_isMC){
     return EL::StatusCode::SUCCESS;
   }
 
-  ifstream fileIn(  gSystem->ExpandPathName("$ROOTCOREBIN/data/ttHPlotter/XS_Samples.txt") );
+  ifstream fileIn(  gSystem->ExpandPathName("$ROOTCOREBIN/data/ttHHistogrammer/XS_Samples.txt") );
   std::string line;
   std::string subStr;
 
