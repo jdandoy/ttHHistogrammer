@@ -124,7 +124,7 @@ def main():
   #prepare output directories for merged files
   os.chdir('../')
   for variant in datasetVariants:
-    directory = variant+'/'
+    directory = variant.replace('.','_')+'/'
     if not os.path.exists(directory):
       os.mkdir(directory)
 
