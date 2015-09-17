@@ -384,7 +384,7 @@ EL::StatusCode HistogramMiniTree :: changeInput (bool firstFile)
   if(m_isMC){
     tree->SetBranchStatus("weight_mc", 1);        tree->SetBranchAddress( "weight_mc", &weight_mc );
     tree->SetBranchStatus("weight_pileup", 1);     tree->SetBranchAddress( "weight_pileup", &weight_pileup);
-    tree->SetBranchStatus("weight_bTagSF", 1);     tree->SetBranchAddress( "weight_bTagSF", &weight_bTagSF);
+    tree->SetBranchStatus("weight_bTagSF_77", 1);     tree->SetBranchAddress( "weight_bTagSF_77", &weight_bTagSF);
     tree->SetBranchStatus("weight_leptonSF", 1);   tree->SetBranchAddress( "weight_leptonSF", &weight_leptonSF);
   }
 

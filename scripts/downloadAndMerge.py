@@ -144,7 +144,7 @@ def main():
       print '  variant: %s'%variant
 
       inputFilesNameWildCard = 'rawDownload/'+dataset.rstrip('/')+'*/*.root*'
-      outputFileName = variant+'/'+dataset.rstrip('/')
+      outputFileName = variant.replace('.root','')+'/'+dataset.rstrip('/')
 
       inputFiles = glob.glob(inputFilesNameWildCard)
 
