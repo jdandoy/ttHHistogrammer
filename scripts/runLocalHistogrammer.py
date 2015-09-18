@@ -9,6 +9,21 @@
 ##############################################################
 
 import os, math, sys, glob, subprocess, time, shutil
+import argparse
+parser = argparse.ArgumentParser(description="%prog [options]", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument("--path", dest='fileDir', default="./",
+     help="Path to the directory containing the input TTrees")
+parser.add_argument("--inTag", dest='inputTag', default="",
+     help="Input tag for choosing files")
+parser.add_argument("--outTag", dest='outputTag', default="NewStudy",
+     help="Output tag for the histogram root files")
+parser.add_argument("--ncores", dest='ncores', default=4,
+     type=int, help="Number of parallel jobs ")
+parser.add_argument("--config", dest='config', default="$ROOTCOREBIN/data/ttHHistogrammer/ttHHistogrammer.config",
+     help="ttHHistogrammer config file")
+args = parser.parse_args()
+
+
 
 def main():
   test = False # does not run the jobs
@@ -16,36 +31,26 @@ def main():
     if not os.path.exists("gridOutput/localJobs"):
       os.makedirs('gridOutput/localJobs')
 
-  config_name = "$ROOTCOREBIN/data/ttHHistogrammer/ttHHistogrammer.config"
+  args.outputTag += time.strftime("_%Y%m%d")
 
-  fileDir = '/home/jdandoy/Documents/ttHFW/gridOutput/output/'
-  inputTag = ''
-  outputTag = 'test'
+  files = glob.glob(args.fileDir+'/*'+args.inputTag+'*.root')
 
-  timestamp = time.strftime("_%Y%m%d")
-  outputTag += timestamp
-
-  files = glob.glob(fileDir+'/*'+inputTag+'*.root')
-
-
-  if not os.path.exists('logs/'+outputTag+'/'):
-    os.makedirs('logs/'+outputTag+'/')
+  if not os.path.exists('logs/'+args.outputTag+'/'):
+    os.makedirs('logs/'+args.outputTag+'/')
 
   pids, logFiles = [], []
-  NCORES = 6
   ## Submit histogramming jobs ##
   for file in files:
-    if len(pids) >= NCORES:
+    if len(pids) >= args.ncores:
       wait_completion(pids, logFiles)
 
     fileTag = os.path.basename(file)[:-5] #remove path and .root
-    logFile='logs/'+outputTag+'/ttHHistogrammer_{0}'.format(fileTag)+'.log'
+    logFile='logs/'+args.outputTag+'/ttHHistogrammer_{0}'.format(fileTag)+'.log'
     submit_dir = 'gridOutput/localJobs/'+fileTag
-    #this_output_tag = '...'+outputTag
+    #this_output_tag = '...'+args.outputTag
 
-    command = 'runttHHistogrammer  --file '+file+' --submitDir '+submit_dir+' --configName '+config_name
+    command = 'runttHHistogrammer  --file '+file+' --submitDir '+submit_dir+' --configName '+args.config
     print command
-    #command = 'runMiniTree  -inFile '+file+' -outputTag '+this_output_tag+' -submitDir '+submit_dir+' -configName '+config_name
 
     if not test:
       res = submit_local_job(command, logFile)
@@ -63,6 +68,7 @@ def main():
 
   print 'Moving files to gridOutput/histOutput'
   outDirs = glob.glob('gridOutput/localJobs/*')
+  ## Output is named hist-output.root by default; Rename and move these files ##
   for outDir in outDirs:
     shutil.move( outDir+'/hist-output.root', 'gridOutput/histOutput/hists_'+os.path.basename(outDir)+'.root' )
 
