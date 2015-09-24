@@ -199,7 +199,7 @@ EL::StatusCode HistogramMiniTree :: histInitialize ()
 
     // Electrons //
     h_el_pt_all.push_back( HM->book(outDir, "h_el_pt_all", "P_{T} of All Electrons (GeV)", 50, 0, 300.) );
-    h_el_eta_all.push_back( HM->book( outDir,"h_el_eta_all", "#Eta of All Electrons", 50, -4., 4.) );
+    h_el_eta_all.push_back( HM->book( outDir,"h_el_eta_all", "#eta of All Electrons", 50, -4., 4.) );
     h_el_phi_all.push_back( HM->book( outDir,"h_el_phi_all", "#Phi of All Electrons", 50, -3.14, 3.14) );
     h_el_e_all.push_back( HM->book( outDir,"h_el_e_all", "Energy of All Electrons (GeV)", 50, 0, 300.) );
 
@@ -209,7 +209,7 @@ EL::StatusCode HistogramMiniTree :: histInitialize ()
     vector<TH1F*> vh_el_e_tmp;
     for(unsigned int iE=0; iE < numHistElectrons; ++iE){
       vh_el_pt_tmp.push_back( HM->book( outDir, ("h_el_pt_"+to_string(iE)).c_str(),  ("P_{T} of Electron "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
-      vh_el_eta_tmp.push_back( HM->book( outDir, ("h_el_eta_"+to_string(iE)).c_str(), ("#Eta of Electron "+to_string(iE)).c_str(), 50, -4, 4) );
+      vh_el_eta_tmp.push_back( HM->book( outDir, ("h_el_eta_"+to_string(iE)).c_str(), ("#eta of Electron "+to_string(iE)).c_str(), 50, -4, 4) );
       vh_el_phi_tmp.push_back( HM->book( outDir, ("h_el_phi_"+to_string(iE)).c_str(), ("#Phi of Electron "+to_string(iE)).c_str(), 50, -3.14, 3.14) );
       vh_el_e_tmp.push_back( HM->book( outDir, ("h_el_e_"+to_string(iE)).c_str(),   ("Energy of Electron "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
     }
@@ -221,7 +221,7 @@ EL::StatusCode HistogramMiniTree :: histInitialize ()
 
     // Muons //
     h_mu_pt_all.push_back( HM->book(outDir, "h_mu_pt_all", "P_{T} of All Muons", 50, 0, 300.) );
-    h_mu_eta_all.push_back( HM->book( outDir,"h_mu_eta_all", "#Eta of All Muons", 50, -4., 4.) );
+    h_mu_eta_all.push_back( HM->book( outDir,"h_mu_eta_all", "#eta of All Muons", 50, -4., 4.) );
     h_mu_phi_all.push_back( HM->book( outDir,"h_mu_phi_all", "#Phi of All Muons", 50, -3.14, 3.14) );
     h_mu_e_all.push_back( HM->book( outDir,"h_mu_e_all", "Energy of All Muons", 50, 0, 300.) );
 
@@ -231,7 +231,7 @@ EL::StatusCode HistogramMiniTree :: histInitialize ()
     vector<TH1F*> vh_mu_e_tmp;
     for(unsigned int iE=0; iE < numHistMuons; ++iE){
       vh_mu_pt_tmp.push_back( HM->book( outDir, ("h_mu_pt_"+to_string(iE)).c_str(),  ("P_{T} of Muon "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
-      vh_mu_eta_tmp.push_back( HM->book( outDir, ("h_mu_eta_"+to_string(iE)).c_str(), ("#Eta of Muon "+to_string(iE)).c_str(), 50, -4, 4) );
+      vh_mu_eta_tmp.push_back( HM->book( outDir, ("h_mu_eta_"+to_string(iE)).c_str(), ("#eta of Muon "+to_string(iE)).c_str(), 50, -4, 4) );
       vh_mu_phi_tmp.push_back( HM->book( outDir, ("h_mu_phi_"+to_string(iE)).c_str(), ("#Phi of Muon "+to_string(iE)).c_str(), 50, -3.14, 3.14) );
       vh_mu_e_tmp.push_back( HM->book( outDir, ("h_mu_e_"+to_string(iE)).c_str(),   ("Energy of Muon "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
     }
@@ -244,7 +244,7 @@ EL::StatusCode HistogramMiniTree :: histInitialize ()
     h_jet_n.push_back( HM->book(outDir, "h_jet_n", "Number of Jets", 20, 0, 20.) );
     h_jet_ht.push_back( HM->book(outDir, "h_jet_ht", "H_{T} of All Jets (GeV)", 50, 0, 300.) );
     h_jet_pt_all.push_back( HM->book(outDir, "h_jet_pt_all", "P_{T} of All Jets (GeV)", 50, 0, 300.) );
-    h_jet_eta_all.push_back( HM->book( outDir,"h_jet_eta_all", "#Eta of All Jets", 50, -4., 4.) );
+    h_jet_eta_all.push_back( HM->book( outDir,"h_jet_eta_all", "#eta of All Jets", 50, -4., 4.) );
     h_jet_phi_all.push_back( HM->book( outDir,"h_jet_phi_all", "#Phi of All Jets", 50, -3.14, 3.14) );
     h_jet_e_all.push_back( HM->book( outDir,"h_jet_e_all", "Energy of All Jets (GeV)", 50, 0, 300.) );
     h_jet_mv2c20_all.push_back( HM->book(outDir, "h_jet_mv2c20_all", "Mv2c20 of All Jets", 50, -1., 1.) );
@@ -256,7 +256,7 @@ EL::StatusCode HistogramMiniTree :: histInitialize ()
     vector<TH1F*> vh_jet_mv2c20_tmp;
     for(unsigned int iE=0; iE < numHistJets; ++iE){
       vh_jet_pt_tmp.push_back( HM->book( outDir, ("h_jet_pt_"+to_string(iE)).c_str(),  ("P_{T} of Jet "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
-      vh_jet_eta_tmp.push_back( HM->book( outDir, ("h_jet_eta_"+to_string(iE)).c_str(), ("#Eta of Jet "+to_string(iE)).c_str(), 50, -4, 4) );
+      vh_jet_eta_tmp.push_back( HM->book( outDir, ("h_jet_eta_"+to_string(iE)).c_str(), ("#eta of Jet "+to_string(iE)).c_str(), 50, -4, 4) );
       vh_jet_phi_tmp.push_back( HM->book( outDir, ("h_jet_phi_"+to_string(iE)).c_str(), ("#Phi of Jet "+to_string(iE)).c_str(), 50, -3.14, 3.14) );
       vh_jet_e_tmp.push_back( HM->book( outDir, ("h_jet_e_"+to_string(iE)).c_str(),   ("Energy of Jet "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
       vh_jet_mv2c20_tmp.push_back( HM->book( outDir, ("h_jet_mv2c20_"+to_string(iE)).c_str(),   ("Mv2c20 of Jet "+to_string(iE)).c_str(), 50, -1., 1.) );
@@ -271,7 +271,7 @@ EL::StatusCode HistogramMiniTree :: histInitialize ()
     h_bjet_n.push_back( HM->book(outDir, "h_bjet_n", "Number of B-Jets", 20, 0, 20.) );
     h_bjet_ht.push_back( HM->book(outDir, "h_bjet_ht", "H_{T} of All B-Jets (GeV)", 50, 0, 300.) );
     h_bjet_pt_all.push_back( HM->book(outDir, "h_bjet_pt_all", "P_{T} of All B-Jets (GeV)", 50, 0, 300.) );
-    h_bjet_eta_all.push_back( HM->book( outDir,"h_bjet_eta_all", "#Eta of All B-Jets", 50, -4., 4.) );
+    h_bjet_eta_all.push_back( HM->book( outDir,"h_bjet_eta_all", "#eta of All B-Jets", 50, -4., 4.) );
     h_bjet_phi_all.push_back( HM->book( outDir,"h_bjet_phi_all", "#Phi of All B-Jets", 50, -3.14, 3.14) );
     h_bjet_e_all.push_back( HM->book( outDir,"h_bjet_e_all", "Energy of All B-Jets (GeV)", 50, 0, 300.) );
     h_bjet_mv2c20_all.push_back( HM->book(outDir, "h_bjet_mv2c20_all", "Mv2c20 of All B-Jets", 50, -1., 1.) );
@@ -283,7 +283,7 @@ EL::StatusCode HistogramMiniTree :: histInitialize ()
     vector<TH1F*> vh_bjet_mv2c20_tmp;
     for(unsigned int iE=0; iE < numHistJets; ++iE){
       vh_bjet_pt_tmp.push_back( HM->book( outDir, ("h_bjet_pt_"+to_string(iE)).c_str(),  ("P_{T} of B-Jet "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
-      vh_bjet_eta_tmp.push_back( HM->book( outDir, ("h_bjet_eta_"+to_string(iE)).c_str(), ("#Eta of B-Jet "+to_string(iE)).c_str(), 50, -4, 4) );
+      vh_bjet_eta_tmp.push_back( HM->book( outDir, ("h_bjet_eta_"+to_string(iE)).c_str(), ("#eta of B-Jet "+to_string(iE)).c_str(), 50, -4, 4) );
       vh_bjet_phi_tmp.push_back( HM->book( outDir, ("h_bjet_phi_"+to_string(iE)).c_str(), ("#Phi of B-Jet "+to_string(iE)).c_str(), 50, -3.14, 3.14) );
       vh_bjet_e_tmp.push_back( HM->book( outDir, ("h_bjet_e_"+to_string(iE)).c_str(),   ("Energy of B-Jet "+to_string(iE)+" (GeV)").c_str(), 50, 0, 300.) );
       vh_bjet_mv2c20_tmp.push_back( HM->book( outDir, ("h_bjet_mv2c20_"+to_string(iE)).c_str(),   ("Mv2c20 of B-Jet "+to_string(iE)).c_str(), 50, -1., 1.) );

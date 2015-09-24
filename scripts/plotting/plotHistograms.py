@@ -810,7 +810,8 @@ def getRatioObjects(c0, logX, logY):
 
 def getSqrtSLumiText( lumi ):
   #sqrtSLumiText = "#sqrt{s}=13 TeV"
-  sqrtSLumiText = "#sqrt{s}=13 TeV, 85 pb^{-1}"
+  #sqrtSLumiText = "#sqrt{s}=13 TeV, 121 pb^{-1}"
+  sqrtSLumiText = "#sqrt{s}=13 TeV, "+str(lumi)+" pb^{-1}"
   return sqrtSLumiText
 
 def getCombinedStack( stackHist ):
