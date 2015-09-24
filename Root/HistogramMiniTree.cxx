@@ -96,42 +96,43 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   m_trigger                  = config->GetValue("Trigger" ,        m_trigger.c_str() );
 
 
-  HistogramMiniTree::Selection *selection_mu_4j2b = new HistogramMiniTree::Selection( "sel_mu_4j_2b", "1 Muon, >= 4 jets, >= 2 b-jets" );
+
+  HistogramMiniTree::Selection *selection_mu_4j2b = new HistogramMiniTree::Selection( "sel_mu_4j_2b", "1 Muon, = 4 jets, = 2 b-jets" );
   selection_mu_4j2b->elNum = 0;
   selection_mu_4j2b->muNum = 1;
   selection_mu_4j2b->jetNum = 4;
-  selection_mu_4j2b->bJetNum = 2;
+  //selection_mu_4j2b->bJetNum = 2;
   selections.push_back( selection_mu_4j2b );
 
-  HistogramMiniTree::Selection *selection_mu_4j3b = new HistogramMiniTree::Selection( "sel_mu_4j_3b", "1 Muon, >= 4 jets, >= 3 b-jets" );
+  HistogramMiniTree::Selection *selection_mu_4j3b = new HistogramMiniTree::Selection( "sel_mu_4j_3b", "1 Muon, = 4 jets, = 3 b-jets" );
   selection_mu_4j3b->elNum = 0;
   selection_mu_4j3b->muNum = 1;
   selection_mu_4j3b->jetNum = 4;
   selection_mu_4j3b->bJetNum = 3;
   selections.push_back( selection_mu_4j3b );
 
-  HistogramMiniTree::Selection *selection_mu_4j4b = new HistogramMiniTree::Selection( "sel_mu_4j_4b", "1 Muon, >= 4 jets, >= 4 b-jets" );
+  HistogramMiniTree::Selection *selection_mu_4j4b = new HistogramMiniTree::Selection( "sel_mu_4j_4b", "1 Muon, = 4 jets, = 4 b-jets" );
   selection_mu_4j4b->elNum = 0;
   selection_mu_4j4b->muNum = 1;
   selection_mu_4j4b->jetNum = 4;
   selection_mu_4j4b->bJetNum = 4;
   selections.push_back( selection_mu_4j4b );
 
-  HistogramMiniTree::Selection *selection_el_4j2b = new HistogramMiniTree::Selection( "sel_el_4j_2b", "1 Electron, >= 4 jets, >= 2 b-jets" );
+  HistogramMiniTree::Selection *selection_el_4j2b = new HistogramMiniTree::Selection( "sel_el_4j_2b", "1 Electron, = 4 jets, = 2 b-jets" );
   selection_el_4j2b->elNum = 1;
   selection_el_4j2b->muNum = 0;
   selection_el_4j2b->jetNum = 4;
   selection_el_4j2b->bJetNum = 2;
   selections.push_back( selection_el_4j2b );
 
-  HistogramMiniTree::Selection *selection_el_4j3b = new HistogramMiniTree::Selection( "sel_el_4j_3b", "1 Electron, >= 4 jets, >= 3 b-jets" );
+  HistogramMiniTree::Selection *selection_el_4j3b = new HistogramMiniTree::Selection( "sel_el_4j_3b", "1 Electron, = 4 jets, = 3 b-jets" );
   selection_el_4j3b->elNum = 1;
   selection_el_4j3b->muNum = 0;
   selection_el_4j3b->jetNum = 4;
   selection_el_4j3b->bJetNum = 3;
   selections.push_back( selection_el_4j3b );
 
-  HistogramMiniTree::Selection *selection_el_4j4b = new HistogramMiniTree::Selection( "sel_el_4j_4b", "1 Electron, >= 4 jets, >= 4 b-jets" );
+  HistogramMiniTree::Selection *selection_el_4j4b = new HistogramMiniTree::Selection( "sel_el_4j_4b", "1 Electron, = 4 jets, = 4 b-jets" );
   selection_el_4j4b->elNum = 1;
   selection_el_4j4b->muNum = 0;
   selection_el_4j4b->jetNum = 4;
@@ -505,7 +506,7 @@ EL::StatusCode HistogramMiniTree :: execute ()
         BJetIndicies.push_back(iJet);
     }
 
-    if (BJetIndicies.size() != selections.at(iS)->bJetNum)
+    if (selections.at(iS)->bJetNum && BJetIndicies.size() != selections.at(iS)->bJetNum)
       continue;
 
 
