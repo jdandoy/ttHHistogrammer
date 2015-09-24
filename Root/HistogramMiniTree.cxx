@@ -492,12 +492,12 @@ EL::StatusCode HistogramMiniTree :: execute ()
 
     if( m_debug)  Info("execute()", "Starting selection %s \n", selections.at(iS)->name.c_str() );
     //selections
-    if (jet_pt->size() != selections.at(iS)->jetNum)
+    if (selections.at(iS)->jetNum && jet_pt->size() != selections.at(iS)->jetNum)
       continue;
 
-    if (el_pt->size() != selections.at(iS)->elNum)
+    if (selections.at(iS)->elNum && el_pt->size() != selections.at(iS)->elNum)
       continue;
-    if (mu_pt->size() != selections.at(iS)->muNum)
+    if (selections.at(iS)->muNum && mu_pt->size() != selections.at(iS)->muNum)
       continue;
 
     vector<int> BJetIndicies;
@@ -508,7 +508,6 @@ EL::StatusCode HistogramMiniTree :: execute ()
 
     if (selections.at(iS)->bJetNum && BJetIndicies.size() != selections.at(iS)->bJetNum)
       continue;
-
 
     // Histogram Filling //
     if( m_debug)  Info("execute()", "Starting Histogram filling \n");
