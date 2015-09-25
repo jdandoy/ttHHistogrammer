@@ -498,9 +498,8 @@ def plot1D( Hists, SampleTypes, SampleNames ):
 
     Hists[iH].Draw( drawString )
 
+  ## Setup Ratio Plots
   if plotRatio:
-    pad2.cd()
-
     ratioHists = [] #Ratio histograms
     iRatioHist = SampleTypes.index(args.ratioWRT)
     for iHist, hist in enumerate(Hists):
@@ -537,6 +536,9 @@ def plot1D( Hists, SampleTypes, SampleNames ):
       configureRatioHist(tmpHist, tmpRatioHist)
       ratioHists.append( tmpRatioHist )
 
+  ## Draw Ratio Plots
+  if plotRatio:
+    pad2.cd()
     for iHist, ratioHist in enumerate(ratioHists):
       ratioHists[iHist].SetStats(0)
       if iHist == 0:
@@ -564,6 +566,19 @@ def plot1D( Hists, SampleTypes, SampleNames ):
       AtlasStyle.myText(0.20,0.75, 1,extraTextString.split(',')[1])
 
   c0.Print( args.outDir + "/" + args.outputTag + "_" + histName + args.outputVersion + ".png","png") #,"png")
+
+
+  ## Draw y-log plots ##
+  if plotRatio:
+    pad1.SetLogy()
+  else:
+    c.SetLogy()
+
+  c0.Print( args.outDir + "/" + args.outputTag + "_" + histName + args.outputVersion + "_logY.png","png") #,"png")
+
+
+
+
 
 ## TODO Draw log versions?
 

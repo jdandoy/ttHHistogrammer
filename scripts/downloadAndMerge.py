@@ -155,7 +155,7 @@ def main():
 
         if args.maxSize <= 0:
           if len(inputFiles) == 1:
-            os.system('mv '+inputFiles[0]+' '+outputFileName+'.root')
+            os.system('cp '+inputFiles[0]+' '+outputFileName+'.root')
           else:
             os.system('hadd '+outputFileName+'.root '+' '.join(inputFiles) )
         else:
@@ -192,20 +192,20 @@ def main():
           ## Combine
           if len( filesToMerge ) == 1: #Only one output file
             if len( filesToMerge[0] ) == 1: #Only one input file
-              os.system('mv '+filesToMerge[0]+' '+outputFileName+'.root ')
+              os.system('cp '+filesToMerge[0]+' '+outputFileName+'.root ')
             else:
               os.system('hadd '+outputFileName+'.root '+' '.join(filesToMerge[0]) )
           else:
             for iMerge, theseFilesToMerge in enumerate( filesToMerge ):
               if len(theseFilesToMerge) == 1:
-                os.system("mv "+theseFilesToMerge[0]+" "+outputFileName+"."+str(iMerge)+".root")
+                os.system("cp "+theseFilesToMerge[0]+" "+outputFileName+"."+str(iMerge)+".root")
               else:
                 os.system('hadd '+outputFileName+'.'+str(iMerge)+'.root '+' '.join(theseFilesToMerge) )
 
 
       elif (renameRawDatasets=="True") :
         for iFile,theFile in enumerate(inputFiles) :
-          os.system("mv "+theFile+" "+outputFileName+"."+str(iFile)+".root")
+          os.system("cp "+theFile+" "+outputFileName+"."+str(iFile)+".root")
 
   #------------------------------------------
   #at last, go back to original directory
