@@ -490,12 +490,17 @@ def plot1D( Hists, SampleTypes, SampleNames ):
     drawString = ""
     if iH != 0:
       drawString += 'same'
-    drawString += 'histe'
+    drawString += 'hist'
+    #drawString += 'histe'
     if not "data" == SampleTypes[iH]:
-      drawString += 'fe'
+      #if args.stackBkg:
+      #  drawString += 'fe'
+      #else:
+      drawString += ''
     else:
       drawString += 'ep'
 
+    print drawString
     Hists[iH].Draw( drawString )
 
   ## Setup Ratio Plots
@@ -571,8 +576,23 @@ def plot1D( Hists, SampleTypes, SampleNames ):
   ## Draw y-log plots ##
   if plotRatio:
     pad1.SetLogy()
+    pad1.cd()
   else:
-    c.SetLogy()
+    c0.SetLogy()
+
+  setMaximum(Hists, True)
+  ### Redraw using new logY maximum ###
+  for iH, hist in enumerate(Hists):
+    drawString = ""
+    if iH != 0:
+      drawString += 'same'
+    drawString += 'histe'
+    if not "data" == SampleTypes[iH]:
+      drawString += 'fe'
+    else:
+      drawString += 'ep'
+
+    Hists[iH].Draw( drawString )
 
   c0.Print( args.outDir + "/" + args.outputTag + "_" + histName + args.outputVersion + "_logY.png","png") #,"png")
 
@@ -613,10 +633,11 @@ def configureRatioHist(originalHist, ratioHist):
   ratioHist.SetMaximum(1.0)
   return
 def configureLegend(SampleTypes, Hists, SampleNames):
-  leg = ROOT.TLegend(0.70,0.7, 0.86, 0.92,"")
+  leg = ROOT.TLegend(0.70,0.70, 0.86, 0.95,"")
   leg.SetTextFont(62)
   leg.SetFillStyle(0)
   leg.SetEntrySeparation(0.0001)
+  leg.SetTextSize(0.04)
 
   ## Draw all input histograms ##
   for iHist, hist in enumerate(Hists):
@@ -628,9 +649,11 @@ def configureLegend(SampleTypes, Hists, SampleNames):
 
     if "stack" == SampleTypes[iHist]:
       for iStack, stackHist in enumerate(hist.GetHists()):
-        leg.AddEntry( stackHist, '{0: <12} {1:.2f}'.format(SampleNames[iHist][iStack],stackHist.Integral()), legendString)
+        leg.AddEntry( stackHist, '{0}: {1:.2f}'.format(SampleNames[iHist][iStack],stackHist.Integral()), legendString)
+        #leg.AddEntry( stackHist, '{0: <12} {1:.2f}'.format(SampleNames[iHist][iStack],stackHist.Integral()), legendString)
     else:
-      leg.AddEntry( hist, '{0: <12} {1:.2f}'.format(SampleNames[iHist],hist.Integral()), legendString)
+      leg.AddEntry( hist, '{0}: {1:.2f}'.format(SampleNames[iHist],hist.Integral()), legendString)
+      #leg.AddEntry( hist, '{0: <12} {1:.2f}'.format(SampleNames[iHist],hist.Integral()), legendString)
 
   return leg
 
@@ -643,15 +666,17 @@ def formatHists( SampleTypes, Hists ):
 
   iMC, iData = 0, 0
   for iS, sampleType in enumerate(SampleTypes):
-    if "data" in sampleType:
+    if "data" in sampleType and len(args.dataType) == 1:
       #print "nothing yet..."
       iData += 1
     else:
-      Hists[iS].SetMarkerSize(0.0)
+      #Hists[iS].SetMarkerSize(0.0)
       Hists[iS].SetMarkerColor(MCColors[iMC])
-      Hists[iS].SetLineColor(ROOT.kBlack)
-      Hists[iS].SetLineWidth(1)
-      Hists[iS].SetFillColor(MCColors[iMC])
+      Hists[iS].SetLineColor(MCColors[iMC])
+      #Hists[iS].SetLineWidth(1)
+      #Hists[iS].SetFillColor(MCColors[iMC])
+      #Hists[iS].SetFillStyle(3001)
+      #!!Hists[iS].SetFillColor(MCColors[iMC])
       #Hists[iS].SetFillColorAlpha(MCColors[iMC], 0)
       #Hists[iS].SetFillStyle(1001)
       iMC += 1
@@ -776,13 +801,15 @@ def getLumiDifference( SampleTypes, hists ):
   return lumiRatio
 
 #### Set Maximum of all hists ####
-def setMaximum(Hists):
+def setMaximum(Hists, logY=False):
   for iHist, hist in enumerate(Hists):
     if iHist == 0:
       yMax = hist.GetMaximum()
     else:
       yMax = max(yMax, hist.GetMaximum() )
-  yMax *= 1.3
+  if logY: yMax *= 6
+  else:    yMax *= 1.3
+
   for iHist, hist in enumerate(Hists):
     hist.SetMaximum( yMax )
   return
