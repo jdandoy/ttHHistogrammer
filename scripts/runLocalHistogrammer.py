@@ -71,7 +71,7 @@ def main():
   ## Output is named hist-output.root by default; Rename and move these files ##
   for outDir in outDirs:
     shutil.move( outDir+'/hist-output.root', 'gridOutput/histOutput/hists_'+os.path.basename(outDir)+'.root' )
-  shutil.rmtree('gridOutput/localJobs')
+    shutil.rmtree(outDir)
 
 
 def submit_local_job(exec_sequence, logfilename):

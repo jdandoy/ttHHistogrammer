@@ -49,20 +49,38 @@ class HistogramMiniTree : public xAH::Algorithm
     struct Selection{
       string name;
       string displayName;
-      unsigned int jetNum;
-      unsigned int bJetNum;
-      unsigned int elNum;
-      unsigned int muNum;
+      int jetNum;
+      int bJetNum;
+      int elNum;
+      int muNum;
+      bool jetEquality;
+      bool bJetEquality;
 
       Selection(std::string thisName, std::string thisDisplayName = ""){
         name = thisName;
         displayName = thisDisplayName;
-        jetNum = 0;
-        bJetNum = 0;
-        elNum = 0;
-        muNum = 0;
+        jetNum = -1;
+        bJetNum = -1;
+        elNum = -1;
+        muNum = -1;
+        jetEquality = true;
+        bJetEquality = true;
       }
+
+    //  Selection( Selection* other){
+    //    name = other->name;
+    //    displayName = other->displayName;
+    //    jetNum = other->jetNum;
+    //    bJetNum = other->bJetNum;
+    //    elNum = other->elNum;
+    //    muNum = other->muNum;
+    //    jetEquality = other->jetEquality;
+    //    bJetEquality = other->bJetEquality;
+    //  }
+
     };
+
+    vector< Selection* > selections;
 
   private:
 
@@ -139,8 +157,6 @@ class HistogramMiniTree : public xAH::Algorithm
     vector<TH1F*> h_ht_all; //!
 
 
-    vector< Selection* > selections;
-
 
     // Branches //
 // !B! Define branch variable here
@@ -154,6 +170,9 @@ class HistogramMiniTree : public xAH::Algorithm
     float weight_pileup; //!
     float weight_bTagSF; //!
     float weight_leptonSF; //!
+
+    int ejets; //!
+    int mujets; //!
 
     vector<float> *el_pt; //!
     vector<float> *el_eta; //!
