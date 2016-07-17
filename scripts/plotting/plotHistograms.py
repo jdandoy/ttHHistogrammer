@@ -61,12 +61,12 @@ parser.add_argument('--range1D', dest='range1D', nargs='+', help='Variable follo
 parser.add_argument('--range1Dy', dest='range1Dy', nargs='+', help='Variable followed by min and max value, i.e. "jet_dRtrk__NPixelHits,3.6,4.3 jet_dRtrk__NSCTHits,7.7,9.0"')
 parser.add_argument('--range2D', dest='range2D', nargs='+', help='Variable followed by min and max value"')
 parser.add_argument('--range2Dy', dest='range2Dy', nargs='+', help='Variable followed by min and max value"')
-parser.add_argument('--ratioRange', dest='ratioRange', nargs='+', help='Variable followed by min and max value, i.e. "mjj,10,400 eta,-0.5,0.5"')
+parser.add_argument('--ratioRange', dest='ratioRange', nargs='+', help='Variable followed by min and max value, i.e. "mjj,10,400 eta,-0.2,0.2"')
 parser.add_argument('--ratioRangeMax', dest='ratioRangeMax', default=1.0, help='Max value of ratio plot range.  If this and ratioRangeMin is 0, it uses ROOT defaults')
 parser.add_argument('--ratioRangeMin', dest='ratioRangeMin', default=-1., help='Min value of ratio plot range.  If this and ratioRangeMax is 0, it uses ROOT defaults')
 parser.add_argument('--ratioRange2DMax', dest='ratioRange2DMax', default=1.1999, help='Max value of ratio plot range.  If this and ratioRange2DMin is 0, it uses ROOT defaults')
 parser.add_argument('--ratioRange2DMin', dest='ratioRange2DMin', default=0.8, help='Min value of ratio plot range.  If this and ratioRange2DMax is 0, it uses ROOT defaults')
-parser.add_argument("--lumi", dest='lumi', type=float, default=0, help="Scale by Luminosity")
+parser.add_argument("--lumi", dest='lumi', type=float, default=0, help="Scale by Luminosity, in /fb")
 
 parser.add_argument("--writeMerged", dest='writeMerged', action='store_true', default=False)
 parser.add_argument('--extraText', dest='extraText', nargs='+', help='add an extra line of text to the canvas, i.e. "NumTrkPt500PV,p_{T}^{trk}>500MeV"')
@@ -249,6 +249,12 @@ def getHistNames( inFileNames ):
     keys = plotDir.GetListOfKeys()
     for key in keys:
       allHistNames[-1].append(args.plotDir+'/'+key.GetName())
+      #if len(args.plotDir <= 1):
+      #  allHistNames[-1].append(args.plotDir+'/'+key.GetName())
+      #else:
+      #  for thisPlotDir in args.plotDir:
+      #    allHistNames[-1].append(thisPlotDir+'/'+key.GetName())
+
 
     inFile.Close()
 
@@ -379,10 +385,10 @@ def scaleHists( histTypes, hists, lumiScale ):
   if args.lumi > 0 :
     for iHist, hist in enumerate(hists):
       if histTypes[iHist] == 'bkg':
-        hist.Scale( args.lumi )
+        hist.Scale( args.lumi*1000. ) #fb -> pb
       elif histTypes[iHist] == 'stack':
         for iStack, stackHist in enumerate(hist.GetHists()):
-          stackHist.Scale( args.lumi )
+          stackHist.Scale( args.lumi*1000. ) #fb -> pb
 
   elif args.normToBkg or args.normToData:
     if not "stack" in histTypes:
@@ -557,7 +563,7 @@ def plot1D( Hists, SampleTypes, SampleNames ):
     c0.cd()
 
   leg.Draw("same")
-  AtlasStyle.ATLAS_LABEL(0.20,0.88)
+  AtlasStyle.ATLAS_LABEL(0.20,0.88, 1, "Internal")
   sqrtSLumiText = getSqrtSLumiText( args.lumi )
   AtlasStyle.myText(0.20,0.82,1, sqrtSLumiText)
   if len(args.plotText)>0:
@@ -629,11 +635,12 @@ def configureRatioHist(originalHist, ratioHist):
   ratioHist.GetYaxis().SetNdivisions(5)
   ratioHist.GetYaxis().SetTitle("#splitline{Relative}{Difference}")
   #ratioHist.GetYaxis().SetTitle("Significance")
-  ratioHist.SetMinimum(-1.0)
-  ratioHist.SetMaximum(1.0)
+  #This is was chaned by Nedaa (-0.5 to 0.5)
+  ratioHist.SetMinimum(-0.5) 
+  ratioHist.SetMaximum(0.5)
   return
 def configureLegend(SampleTypes, Hists, SampleNames):
-  leg = ROOT.TLegend(0.70,0.70, 0.86, 0.95,"")
+  leg = ROOT.TLegend(0.70,0.65, 0.86, 0.95,"")
   leg.SetTextFont(62)
   leg.SetFillStyle(0)
   leg.SetEntrySeparation(0.0001)
@@ -649,11 +656,11 @@ def configureLegend(SampleTypes, Hists, SampleNames):
 
     if "stack" == SampleTypes[iHist]:
       for iStack, stackHist in enumerate(hist.GetHists()):
+        #leg.AddEntry( stackHist, SampleNames[iHist][iStack], legendString)
         leg.AddEntry( stackHist, '{0}: {1:.2f}'.format(SampleNames[iHist][iStack],stackHist.Integral()), legendString)
-        #leg.AddEntry( stackHist, '{0: <12} {1:.2f}'.format(SampleNames[iHist][iStack],stackHist.Integral()), legendString)
     else:
+     # leg.AddEntry( hist, SampleNames[iHist], legendString)
       leg.AddEntry( hist, '{0}: {1:.2f}'.format(SampleNames[iHist],hist.Integral()), legendString)
-      #leg.AddEntry( hist, '{0: <12} {1:.2f}'.format(SampleNames[iHist],hist.Integral()), legendString)
 
   return leg
 
@@ -662,7 +669,7 @@ def configureLegend(SampleTypes, Hists, SampleNames):
 def formatHists( SampleTypes, Hists ):
 
   #TODO more automatic color selection
-  MCColors = [ROOT.kBlue, ROOT.kRed, ROOT.kGreen, ROOT.kOrange, ROOT.kCyan, ROOT.kViolet, ROOT.kYellow, ROOT.kBlack, ROOT.kPink]
+  MCColors = [46, ROOT.kBlue, 30, ROOT.kOrange, ROOT.kViolet, ROOT.kGreen, ROOT.kCyan, ROOT.kMagenta, ROOT.kPink]
 
   iMC, iData = 0, 0
   for iS, sampleType in enumerate(SampleTypes):
@@ -676,7 +683,8 @@ def formatHists( SampleTypes, Hists ):
       #Hists[iS].SetLineWidth(1)
       #Hists[iS].SetFillColor(MCColors[iMC])
       #Hists[iS].SetFillStyle(3001)
-      #!!Hists[iS].SetFillColor(MCColors[iMC])
+      #CHANGED
+      #Hists[iS].SetFillColor(MCColors[iMC])
       #Hists[iS].SetFillColorAlpha(MCColors[iMC], 0)
       #Hists[iS].SetFillStyle(1001)
       iMC += 1
@@ -852,8 +860,7 @@ def getRatioObjects(c0, logX, logY):
 
 def getSqrtSLumiText( lumi ):
   #sqrtSLumiText = "#sqrt{s}=13 TeV"
-  #sqrtSLumiText = "#sqrt{s}=13 TeV, 121 pb^{-1}"
-  sqrtSLumiText = "#sqrt{s}=13 TeV, "+str(lumi)+" pb^{-1}"
+  sqrtSLumiText = "#sqrt{s}=13 TeV, "+str(lumi)+" fb^{-1}"
   return sqrtSLumiText
 
 def getCombinedStack( stackHist ):

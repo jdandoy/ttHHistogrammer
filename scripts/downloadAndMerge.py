@@ -36,7 +36,8 @@ def main():
   outputPath = args.outPath
 #  datasetVariants = ['cutflow', 'hist-output', 'metadata', 'tree']#, 'log']
 #  datasetVariants = args.types.split(',')
-  datasetVariants = ['output.root']
+  datasetVariants = ['out.root']
+  #datasetVariants = ['output.root']
   mergeRawDatasets = args.mergeRawDatasets
   renameRawDatasets = args.renameRawDatasets
 

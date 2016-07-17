@@ -31,7 +31,8 @@ int main( int argc, char* argv[] ) {
   // Init various job options
   //
   std::string configName = "$ROOTCOREBIN/data/ttHHistogrammer/ttHHistogrammer.config";
-  std::string treeName   = "nominal";
+  //std::string treeName   = "nominal";
+  std::string treeName   = "nominal_Loose";
   std::string submitDir  = "submitDir";
   std::string outputName;
   bool doCondor          = false;

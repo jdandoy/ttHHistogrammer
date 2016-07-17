@@ -55,6 +55,8 @@ class HistogramMiniTree : public xAH::Algorithm
       int muNum;
       bool jetEquality;
       bool bJetEquality;
+      bool m2015;
+      bool m2016;
 
       Selection(std::string thisName, std::string thisDisplayName = ""){
         name = thisName;
@@ -65,6 +67,8 @@ class HistogramMiniTree : public xAH::Algorithm
         muNum = -1;
         jetEquality = true;
         bJetEquality = true;
+        m2015 = false;
+        m2016 = false;
       }
 
     //  Selection( Selection* other){
@@ -84,7 +88,7 @@ class HistogramMiniTree : public xAH::Algorithm
 
   private:
 
-
+    bool f_leptonDecision; //!
     bool m_isMC; //!
     std::string m_mcChannelNumber; //!
     float m_XSWeight; //!
@@ -93,6 +97,8 @@ class HistogramMiniTree : public xAH::Algorithm
     // Config file options //
     float m_bTagWP;
     std::string m_trigger;
+    bool f_use2015;
+    bool f_use2016;
 
 
 
@@ -130,12 +136,12 @@ class HistogramMiniTree : public xAH::Algorithm
     vector<TH1F*> h_jet_eta_all; //!
     vector<TH1F*> h_jet_phi_all; //!
     vector<TH1F*> h_jet_e_all; //!
-    vector<TH1F*> h_jet_mv2c20_all; //!
+    vector<TH1F*> h_jet_mv2c10_all; //!
     vector< vector<TH1F*> > vh_jet_pt; //!
     vector< vector<TH1F*> > vh_jet_eta; //!
     vector< vector<TH1F*> > vh_jet_phi; //!
     vector< vector<TH1F*> > vh_jet_e; //!
-    vector< vector<TH1F*> > vh_jet_mv2c20; //!
+    vector< vector<TH1F*> > vh_jet_mv2c10; //!
 
     // B-Jets //
     vector<TH1F*> h_bjet_n; //!
@@ -144,17 +150,18 @@ class HistogramMiniTree : public xAH::Algorithm
     vector<TH1F*> h_bjet_eta_all; //!
     vector<TH1F*> h_bjet_phi_all; //!
     vector<TH1F*> h_bjet_e_all; //!
-    vector<TH1F*> h_bjet_mv2c20_all; //!
+    vector<TH1F*> h_bjet_mv2c10_all; //!
     vector< vector<TH1F*> > vh_bjet_pt; //!
     vector< vector<TH1F*> > vh_bjet_eta; //!
     vector< vector<TH1F*> > vh_bjet_phi; //!
     vector< vector<TH1F*> > vh_bjet_e; //!
-    vector< vector<TH1F*> > vh_bjet_mv2c20; //!
+    vector< vector<TH1F*> > vh_bjet_mv2c10; //!
 
 
     // Others //
     vector<TH1F*> h_met; //!
     vector<TH1F*> h_ht_all; //!
+    vector<TH1F*> h_ClassifBDTOutput_withReco_basic; //!
 
 
 
@@ -168,23 +175,38 @@ class HistogramMiniTree : public xAH::Algorithm
     float met_phi; //!
     float weight_mc; //!
     float weight_pileup; //!
-    float weight_bTagSF; //!
     float weight_leptonSF; //!
+    float weight_bTagSF_77; //!
+    float weight_bTagSF_70; //!
+    float weight_jvt; //!
+    float weight_ttbb_Nominal; //!
+    float ClassifBDTOutput_withReco_basic; //!
 
-    int ejets; //!
-    int mujets; //!
+    int           ejets_2015; //!
+    int           ejets_2016; //!
+    int           mujets_2015; //!
+    int           mujets_2016; //!
+    int           ee_2015; //!
+    int           ee_2016; //!
+    int           mumu_2015; //!
+    int           mumu_2016; //!
+    int           emu_2015; //!
+    int           emu_2016; //!
 
     vector<float> *el_pt; //!
     vector<float> *el_eta; //!
+    vector<float>   *el_cl_eta; //!
     vector<float> *el_phi; //!
     vector<float> *el_e; //!
     vector<float> *el_charge; //!
     vector<float> *el_topoetcone20; //!
     vector<float> *el_ptvarcone20; //!
+    //vector<char>    *el_isTight; //!
     vector<float> *mu_pt; //!
     vector<float> *mu_eta; //!
     vector<float> *mu_phi; //!
     vector<float> *mu_e; //!
+    //vector<char>    *mu_isTight; //!
     vector<float> *mu_charge; //!
     vector<float> *mu_topoetcone20; //!
     vector<float> *mu_ptvarcone30; //!
@@ -192,15 +214,12 @@ class HistogramMiniTree : public xAH::Algorithm
     vector<float> *jet_eta; //!
     vector<float> *jet_phi; //!
     vector<float> *jet_e; //!
-    vector<float> *jet_mv1; //!
-    vector<float> *jet_mvb; //!
-    vector<float> *jet_mv1c; //!
-    vector<float> *jet_mv2c00; //!
     vector<float> *jet_mv2c10; //!
     vector<float> *jet_mv2c20; //!
-    vector<float> *jet_ip3dsv1; //!
     vector<float> *jet_jvt; //!
-
+    vector<int>     *jet_truthflav;
+    vector<char>    *jet_isbtagged_70;
+    vector<char>    *jet_isbtagged_77;
   // variables that don't get filled at submission time should be
   // protected from being send from the submission node to the worker
   // node (done by the //!)

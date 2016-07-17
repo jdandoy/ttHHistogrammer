@@ -31,12 +31,17 @@ def main():
     if not os.path.exists("gridOutput/localJobs"):
       os.makedirs('gridOutput/localJobs')
 
-  args.outputTag += time.strftime("_%Y%m%d")
+  args.logTag = args.outputTag + time.strftime("_%Y%m%d")
+
+  if args.fileDir.endswith('/'):
+    args.fileDir = args.fileDir[:-1]
 
   files = glob.glob(args.fileDir+'/*'+args.inputTag+'*.root')
 
-  if not os.path.exists('logs/'+args.outputTag+'/'):
-    os.makedirs('logs/'+args.outputTag+'/')
+  if not os.path.exists('logs/'+args.logTag+'/'):
+    os.makedirs('logs/'+args.logTag+'/')
+
+  outHistName = 'hist-'+args.fileDir.split('/')[-1]+'.root'
 
   pids, logFiles = [], []
   ## Submit histogramming jobs ##
@@ -44,8 +49,8 @@ def main():
     if len(pids) >= args.ncores:
       wait_completion(pids, logFiles)
 
-    fileTag = os.path.basename(file)[:-5] #remove path and .root
-    logFile='logs/'+args.outputTag+'/ttHHistogrammer_{0}'.format(fileTag)+'.log'
+    fileTag = os.path.basename(file)[:-5]+'_'+args.outputTag #remove path and .root
+    logFile='logs/'+args.logTag+'/ttHHistogrammer_{0}'.format(fileTag)+'.log'
     submit_dir = 'gridOutput/localJobs/'+fileTag
     #this_output_tag = '...'+args.outputTag
 
@@ -70,7 +75,7 @@ def main():
   outDirs = glob.glob('gridOutput/localJobs/*')
   ## Output is named hist-output.root by default; Rename and move these files ##
   for outDir in outDirs:
-    shutil.move( outDir+'/hist-output.root', 'gridOutput/histOutput/hists_'+os.path.basename(outDir)+'.root' )
+    shutil.move( outDir+'/'+outHistName, 'gridOutput/histOutput/hists_'+os.path.basename(outDir)+'.root' )
     shutil.rmtree(outDir)
 
 

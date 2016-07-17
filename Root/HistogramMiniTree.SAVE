@@ -42,13 +42,11 @@ HistogramMiniTree :: HistogramMiniTree () :
 //  HLT_mu50(0),
   el_pt(0),
   el_eta(0),
-  el_cl_eta(0),
   el_phi(0),
   el_e(0),
   el_charge(0),
   el_topoetcone20(0),
   el_ptvarcone20(0),
-  //el_isTight(0),
   mu_pt(0),
   mu_eta(0),
   mu_phi(0),
@@ -56,25 +54,24 @@ HistogramMiniTree :: HistogramMiniTree () :
   mu_charge(0),
   mu_topoetcone20(0),
   mu_ptvarcone30(0),
-  //mu_isTight(0),
   jet_pt(0),
   jet_eta(0),
   jet_phi(0),
   jet_e(0),
+  jet_mv1(0),
+  jet_mvb(0),
+  jet_mv1c(0),
+  jet_mv2c00(0),
   jet_mv2c10(0),
   jet_mv2c20(0),
-  jet_jvt(0),
-  jet_truthflav(0),
-  jet_isbtagged_70(0),
-  jet_isbtagged_77(0)
+  jet_ip3dsv1(0),
+  jet_jvt(0)
 {
   Info("HistogramMiniTree()", "Calling constructor");
 
   m_debug = false;
-  //70
-  m_bTagWP = 0.8244;
-  //77
-  //m_bTagWP = 0.6459; 
+ //m_bTagWP = -0.4434;
+ m_bTagWP = 0.8244;
   m_trigger = "";
   m_isMC = true;
   m_XSWeight = 1.0;
@@ -94,44 +91,25 @@ EL::StatusCode  HistogramMiniTree :: configure ()
     return EL::StatusCode::FAILURE;
   }
 
-  f_use2016 = false;
-  f_use2015 = false;
-
   // Read Input from .config file
   m_debug                    = config->GetValue("Debug" ,          m_debug );
   m_bTagWP                   = config->GetValue("BTagWP" ,         m_bTagWP );
   m_trigger                  = config->GetValue("Trigger" ,        m_trigger.c_str() );
-  f_use2015                  = config->GetValue("Use2015" ,        f_use2015 );
-  f_use2016                  = config->GetValue("Use2016" ,        f_use2016 );
-
-  // Set this to true if using lepton decision, i.e. ejets
-  // Set to false if you want to count the # of leptons, i.e. el_pt->size()
-  f_leptonDecision = true;
-
 
   HistogramMiniTree::Selection *selection_el_4j = new HistogramMiniTree::Selection( "sel_el_4j", "1 Electron, >= 4 jets" );
   selection_el_4j->elNum = 1;
   selection_el_4j->muNum = 0;
   selection_el_4j->jetNum = 4;
   selection_el_4j->jetEquality = false;
-  selections.push_back( selection_el_4j);
-
+  selections.push_back( selection_el_4j );
 
   HistogramMiniTree::Selection *selection_mu_4j = new HistogramMiniTree::Selection( "sel_mu_4j", "1 Muon, >= 4 jets" );
   selection_mu_4j->elNum = 0;
   selection_mu_4j->muNum = 1;
   selection_mu_4j->jetNum = 4;
   selection_mu_4j->jetEquality = false;
-  selections.push_back( selection_mu_4j);
+  selections.push_back( selection_mu_4j );
 
-  /*HistogramMiniTree::Selection *selection_emu_4j = new HistogramMiniTree::Selection( "sel_emu_4j", "1 Muon, 1 Electron, >= 4 jets" );
-  selection_emu_4j->elNum = 1;
-  selection_emu_4j->muNum = 1;
-  selection_emu_4j->jetNum = 4;
-  selection_emu_4j->jetEquality = false;
-  selections.push_back( selection_emu_4j);*/
-
-  
   HistogramMiniTree::Selection *selection_mu_4j2b = new HistogramMiniTree::Selection( "sel_mu_4j_2b", "1 Muon, >= 4 jets, >= 2 b-jets" );
   selection_mu_4j2b->elNum = 0;
   selection_mu_4j2b->muNum = 1;
@@ -141,15 +119,12 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   selection_mu_4j2b->bJetEquality = false;
   selections.push_back( selection_mu_4j2b );
 
-  
   HistogramMiniTree::Selection *selection_mu_4j3b = new HistogramMiniTree::Selection( "sel_mu_4j_3b", "1 Muon, = 4 jets, = 3 b-jets" );
   selection_mu_4j3b->elNum = 0;
   selection_mu_4j3b->muNum = 1;
   selection_mu_4j3b->jetNum = 4;
   selection_mu_4j3b->bJetNum = 3;
   selections.push_back( selection_mu_4j3b );
-
-  //selection_mu_4j4b->bJetEquality = false;
 
   HistogramMiniTree::Selection *selection_mu_4j4b = new HistogramMiniTree::Selection( "sel_mu_4j_4b", "1 Muon, = 4 jets, = 4 b-jets" );
   selection_mu_4j4b->elNum = 0;
@@ -159,7 +134,6 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   //selection_mu_4j4b->bJetEquality = false;
   selections.push_back( selection_mu_4j4b );
 
-  
   HistogramMiniTree::Selection *selection_el_4j2b = new HistogramMiniTree::Selection( "sel_el_4j_2b", "1 Electron, >= 4 jets, >= 2 b-jets" );
   selection_el_4j2b->elNum = 1;
   selection_el_4j2b->muNum = 0;
@@ -169,7 +143,6 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   selection_el_4j2b->bJetEquality = false;
   selections.push_back( selection_el_4j2b );
 
-
   HistogramMiniTree::Selection *selection_el_4j3b = new HistogramMiniTree::Selection( "sel_el_4j_3b", "1 Electron, = 4 jets, = 3 b-jets" );
   selection_el_4j3b->elNum = 1;
   selection_el_4j3b->muNum = 0;
@@ -177,16 +150,13 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   selection_el_4j3b->bJetNum = 3;
   selections.push_back( selection_el_4j3b );
 
-  //selection_el_4j4b->bJetEquality = false;
-
   HistogramMiniTree::Selection *selection_el_4j4b = new HistogramMiniTree::Selection( "sel_el_4j_4b", "1 Electron, = 4 jets, = 4 b-jets" );
   selection_el_4j4b->elNum = 1;
   selection_el_4j4b->muNum = 0;
   selection_el_4j4b->jetNum = 4;
   selection_el_4j4b->bJetNum = 4;
   //selection_el_4j4b->bJetEquality = false;
-  selections.push_back( selection_el_4j4b);
-
+  selections.push_back( selection_el_4j4b );
 
   HistogramMiniTree::Selection *selection_mu_5j2b = new HistogramMiniTree::Selection( "sel_mu_5j_2b", "1 Muon, = 5 jets, = 2 b-jets" );
   selection_mu_5j2b->elNum = 0;
@@ -195,7 +165,6 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   selection_mu_5j2b->bJetNum = 2;
   selections.push_back( selection_mu_5j2b );
 
-
   HistogramMiniTree::Selection *selection_mu_5j3b = new HistogramMiniTree::Selection( "sel_mu_5j_3b", "1 Muon, = 5 jets, = 3 b-jets" );
   selection_mu_5j3b->elNum = 0;
   selection_mu_5j3b->muNum = 1;
@@ -203,7 +172,6 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   selection_mu_5j3b->bJetNum = 3;
   selections.push_back( selection_mu_5j3b );
 
-  
   HistogramMiniTree::Selection *selection_mu_5j4b = new HistogramMiniTree::Selection( "sel_mu_5j_4b", "1 Muon, = 5 jets, >= 4 b-jets" );
   selection_mu_5j4b->elNum = 0;
   selection_mu_5j4b->muNum = 1;
@@ -212,7 +180,6 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   selection_mu_5j4b->bJetEquality = false;
   selections.push_back( selection_mu_5j4b );
 
- 
   HistogramMiniTree::Selection *selection_el_5j2b = new HistogramMiniTree::Selection( "sel_el_5j_2b", "1 Electron, = 5 jets, = 2 b-jets" );
   selection_el_5j2b->elNum = 1;
   selection_el_5j2b->muNum = 0;
@@ -220,14 +187,12 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   selection_el_5j2b->bJetNum = 2;
   selections.push_back( selection_el_5j2b );
 
-
   HistogramMiniTree::Selection *selection_el_5j3b = new HistogramMiniTree::Selection( "sel_el_5j_3b", "1 Electron, = 5 jets, = 3 b-jets" );
   selection_el_5j3b->elNum = 1;
   selection_el_5j3b->muNum = 0;
   selection_el_5j3b->jetNum = 5;
   selection_el_5j3b->bJetNum = 3;
   selections.push_back( selection_el_5j3b );
-
 
   HistogramMiniTree::Selection *selection_el_5j4b = new HistogramMiniTree::Selection( "sel_el_5j_4b", "1 Electron, = 5 jets, >= 4 b-jets" );
   selection_el_5j4b->elNum = 1;
@@ -237,8 +202,6 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   selection_el_5j4b->bJetEquality = false;
   selections.push_back( selection_el_5j4b );
 
-  //selection_mu_6j2b->bJetEquality = false;
-  
   HistogramMiniTree::Selection *selection_mu_6j2b = new HistogramMiniTree::Selection( "sel_mu_6j_2b", "1 Muon, >= 6 jets, = 2 b-jets" );
   selection_mu_6j2b->elNum = 0;
   selection_mu_6j2b->muNum = 1;
@@ -248,7 +211,6 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   //selection_mu_6j2b->bJetEquality = false;
   selections.push_back( selection_mu_6j2b );
 
-
   HistogramMiniTree::Selection *selection_mu_6j3b = new HistogramMiniTree::Selection( "sel_mu_6j_3b", "1 Muon, >= 6 jets, = 3 b-jets" );
   selection_mu_6j3b->elNum = 0;
   selection_mu_6j3b->muNum = 1;
@@ -256,7 +218,6 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   selection_mu_6j3b->jetEquality = false;
   selection_mu_6j3b->bJetNum = 3;
   selections.push_back( selection_mu_6j3b );
-
 
   HistogramMiniTree::Selection *selection_mu_6j4b = new HistogramMiniTree::Selection( "sel_mu_6j_4b", "1 Muon, >= 6 jets, >= 4 b-jets" );
   selection_mu_6j4b->elNum = 0;
@@ -267,8 +228,6 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   selection_mu_6j4b->bJetEquality = false;
   selections.push_back( selection_mu_6j4b );
 
-  //selection_el_6j2b->bJetEquality = false;
-
   HistogramMiniTree::Selection *selection_el_6j2b = new HistogramMiniTree::Selection( "sel_el_6j_2b", "1 Electron, >= 6 jets, = 2 b-jets" );
   selection_el_6j2b->elNum = 1;
   selection_el_6j2b->muNum = 0;
@@ -278,7 +237,6 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   //selection_el_6j2b->bJetEquality = false;
   selections.push_back( selection_el_6j2b );
 
-
   HistogramMiniTree::Selection *selection_el_6j3b = new HistogramMiniTree::Selection( "sel_el_6j_3b", "1 Electron, >= 6 jets, = 3 b-jets" );
   selection_el_6j3b->elNum = 1;
   selection_el_6j3b->muNum = 0;
@@ -286,7 +244,6 @@ EL::StatusCode  HistogramMiniTree :: configure ()
   selection_el_6j3b->jetEquality = false;
   selection_el_6j3b->bJetNum = 3;
   selections.push_back( selection_el_6j3b );
-
 
   HistogramMiniTree::Selection *selection_el_6j4b = new HistogramMiniTree::Selection( "sel_el_6j_4b", "1 Electron, >= 6 jets, >= 4 b-jets" );
   selection_el_6j4b->elNum = 1;
@@ -432,25 +389,25 @@ EL::StatusCode HistogramMiniTree :: histInitialize ()
     h_jet_eta_all.push_back( HM->book( outDir,"h_jet_eta_all", "#eta of All Jets", 50, -4., 4.) );
     h_jet_phi_all.push_back( HM->book( outDir,"h_jet_phi_all", "#phi of All Jets", 50, -3.14, 3.14) );
     h_jet_e_all.push_back( HM->book( outDir,"h_jet_e_all", "Energy of All Jets (GeV)", 50, 0, 300.) );
-    h_jet_mv2c10_all.push_back( HM->book(outDir, "h_jet_mv2c10_all", "Mv2c20 of All Jets", 50, -1., 1.) );
+    h_jet_mv2c20_all.push_back( HM->book(outDir, "h_jet_mv2c20_all", "Mv2c20 of All Jets", 50, -1., 1.) );
 
     vector<TH1F*> vh_jet_pt_tmp;
     vector<TH1F*> vh_jet_eta_tmp;
     vector<TH1F*> vh_jet_phi_tmp;
     vector<TH1F*> vh_jet_e_tmp;
-    vector<TH1F*> vh_jet_mv2c10_tmp;
+    vector<TH1F*> vh_jet_mv2c20_tmp;
     for(unsigned int iE=0; iE < numHistJets; ++iE){
       vh_jet_pt_tmp.push_back( HM->book( outDir, ("h_jet_"+to_string(iE)+"_pt").c_str(),  ("P_{T} of Jet "+to_string(iE+1)+" (GeV)").c_str(), 20, 0, 300.) );
       vh_jet_eta_tmp.push_back( HM->book( outDir, ("h_jet_"+to_string(iE)+"_eta").c_str(), ("#eta of Jet "+to_string(iE+1)).c_str(), 50, -4, 4) );
       vh_jet_phi_tmp.push_back( HM->book( outDir, ("h_jet_"+to_string(iE)+"_phi").c_str(), ("#phi of Jet "+to_string(iE+1)).c_str(), 50, -3.14, 3.14) );
       vh_jet_e_tmp.push_back( HM->book( outDir, ("h_jet_"+to_string(iE)+"_e").c_str(),   ("Energy of Jet "+to_string(iE+1)+" (GeV)").c_str(), 50, 0, 300.) );
-      vh_jet_mv2c10_tmp.push_back( HM->book( outDir, ("h_jet_"+to_string(iE)+"_mv2c10").c_str(),   ("Mv2c10 of Jet "+to_string(iE+1)).c_str(), 50, -1., 1.) );
+      vh_jet_mv2c20_tmp.push_back( HM->book( outDir, ("h_jet_"+to_string(iE)+"_mv2c20").c_str(),   ("Mv2c20 of Jet "+to_string(iE+1)).c_str(), 50, -1., 1.) );
     }
     vh_jet_pt.push_back( vh_jet_pt_tmp );
     vh_jet_eta.push_back( vh_jet_eta_tmp );
     vh_jet_phi.push_back( vh_jet_phi_tmp );
     vh_jet_e.push_back( vh_jet_e_tmp );
-    vh_jet_mv2c10.push_back( vh_jet_mv2c10_tmp );
+    vh_jet_mv2c20.push_back( vh_jet_mv2c20_tmp );
 
     // B-Jets //
     h_bjet_n.push_back( HM->book(outDir, "h_bjet_n", "Number of B-Jets", 20, 0, 20.) );
@@ -459,25 +416,25 @@ EL::StatusCode HistogramMiniTree :: histInitialize ()
     h_bjet_eta_all.push_back( HM->book( outDir,"h_bjet_eta_all", "#eta of All B-Jets", 50, -4., 4.) );
     h_bjet_phi_all.push_back( HM->book( outDir,"h_bjet_phi_all", "#phi of All B-Jets", 50, -3.14, 3.14) );
     h_bjet_e_all.push_back( HM->book( outDir,"h_bjet_e_all", "Energy of All B-Jets (GeV)", 50, 0, 300.) );
-    h_bjet_mv2c10_all.push_back( HM->book(outDir, "h_bjet_mv2c10_all", "Mv2c20 of All B-Jets", 50, -1., 1.) );
+    h_bjet_mv2c20_all.push_back( HM->book(outDir, "h_bjet_mv2c20_all", "Mv2c20 of All B-Jets", 50, -1., 1.) );
 
     vector<TH1F*> vh_bjet_pt_tmp;
     vector<TH1F*> vh_bjet_eta_tmp;
     vector<TH1F*> vh_bjet_phi_tmp;
     vector<TH1F*> vh_bjet_e_tmp;
-    vector<TH1F*> vh_bjet_mv2c10_tmp;
+    vector<TH1F*> vh_bjet_mv2c20_tmp;
     for(unsigned int iE=0; iE < numHistJets; ++iE){
       vh_bjet_pt_tmp.push_back( HM->book( outDir, ("h_bjet_"+to_string(iE)+"_pt").c_str(),  ("P_{T} of B-Jet "+to_string(iE+1)+" (GeV)").c_str(), 20, 0, 300.) );
       vh_bjet_eta_tmp.push_back( HM->book( outDir, ("h_bjet_"+to_string(iE)+"_eta").c_str(), ("#eta of B-Jet "+to_string(iE+1)).c_str(), 50, -4, 4) );
       vh_bjet_phi_tmp.push_back( HM->book( outDir, ("h_bjet_"+to_string(iE)+"_phi").c_str(), ("#phi of B-Jet "+to_string(iE+1)).c_str(), 50, -3.14, 3.14) );
       vh_bjet_e_tmp.push_back( HM->book( outDir, ("h_bjet_"+to_string(iE)+"_e").c_str(),   ("Energy of B-Jet "+to_string(iE+1)+" (GeV)").c_str(), 50, 0, 300.) );
-      vh_bjet_mv2c10_tmp.push_back( HM->book( outDir, ("h_bjet_"+to_string(iE)+"_mv2c10").c_str(),   ("Mv2c10 of B-Jet "+to_string(iE+1)).c_str(), 50, -1., 1.) );
+      vh_bjet_mv2c20_tmp.push_back( HM->book( outDir, ("h_bjet_"+to_string(iE)+"_mv2c20").c_str(),   ("Mv2c20 of B-Jet "+to_string(iE+1)).c_str(), 50, -1., 1.) );
     }
     vh_bjet_pt.push_back( vh_bjet_pt_tmp );
     vh_bjet_eta.push_back( vh_bjet_eta_tmp );
     vh_bjet_phi.push_back( vh_bjet_phi_tmp );
     vh_bjet_e.push_back( vh_bjet_e_tmp );
-    vh_bjet_mv2c10.push_back( vh_bjet_mv2c10_tmp );
+    vh_bjet_mv2c20.push_back( vh_bjet_mv2c20_tmp );
 
     // Others //
     //h_met.push_back( HM->book(outDir, "h_met", "MET (GeV)", 40, 0, 400.) );
@@ -528,7 +485,7 @@ EL::StatusCode HistogramMiniTree :: changeInput (bool firstFile)
     int fieldCount = 0;
     while (std::getline(ss, thisField, '.')) {
       //Tried this
-      if (fieldCount == 3){
+      if (fieldCount == 2){
         m_mcChannelNumber = thisField;
         m_mcChannelNumber.erase(0, m_mcChannelNumber.find_first_not_of('0')); //Remove leading zeros
         break;
@@ -539,7 +496,7 @@ EL::StatusCode HistogramMiniTree :: changeInput (bool firstFile)
 
     getLumiWeights(); //retrieve XS+FiltEff weights for MC
 
-    //Get totalEventsWeighted*    TTree* eventNumTree = (TTree*) inputFile->Get("sumWeights");
+    //Get totalEventsWeighted
     TTree* eventNumTree = (TTree*) inputFile->Get("sumWeights");
     float totalEventsWeighted = 0;
     eventNumTree->SetBranchAddress("totalEventsWeighted", &totalEventsWeighted);
@@ -550,9 +507,9 @@ EL::StatusCode HistogramMiniTree :: changeInput (bool firstFile)
       cout << "!!!!! " << totalEventsWeighted << endl;
       m_totalNumEvents += totalEventsWeighted;
     }
-   
-//    TDirectoryFile *dir = dynamic_cast<TDirectoryFile *>(f->Get("ejets_2015"));
-  /*  TH1F* cutflow = (TH1F*) inputFile->Get("ejets_2015/cutflow_mc_Loose");
+
+    //TDirectoryFile *dir = dynamic_cast<TDirectoryFile *>(f->Get("ejets"));
+    /*TH1F* cutflow = (TH1F*) inputFile->Get("ejets/cutflow_Loose");
     m_totalNumEvents = cutflow->GetBinContent(1);*/
     //cout << "m_totalNumEvents : " << m_totalNumEvents << endl;
     Info("changeInput()", "From sumWeights TTree, found totalNumber of events %f", m_totalNumEvents);
@@ -575,31 +532,19 @@ EL::StatusCode HistogramMiniTree :: changeInput (bool firstFile)
   tree->SetBranchStatus ("*", 0);
 
 
-  tree->SetBranchStatus("ejets_2015", 1);   tree->SetBranchAddress( "ejets_2015", &ejets_2015);
-  tree->SetBranchStatus("ejets_2016", 1);   tree->SetBranchAddress( "ejets_2016", &ejets_2016);
-  tree->SetBranchStatus("mujets_2015", 1);   tree->SetBranchAddress( "mujets_2015", &mujets_2015);
-  tree->SetBranchStatus("mujets_2016", 1);   tree->SetBranchAddress( "mujets_2016", &mujets_2015);
-  //Dilepton Events
-  tree->SetBranchStatus("ee_2015", 1);   tree->SetBranchAddress( "ee_2015", &ee_2015);
-  tree->SetBranchStatus("ee_2016", 1);   tree->SetBranchAddress( "ee_2016", &ee_2016);
-  tree->SetBranchStatus("mumu_2015", 1);   tree->SetBranchAddress( "mumu_2015", &mumu_2015);
-  tree->SetBranchStatus("mumu_2016", 1);   tree->SetBranchAddress( "mumu_2016", &mumu_2016);
-  tree->SetBranchStatus("emu_2015", 1);   tree->SetBranchAddress( "emu_2015", &emu_2015);
-  tree->SetBranchStatus("emu_2016", 1);   tree->SetBranchAddress( "emu_2016", &emu_2016);
+  tree->SetBranchStatus("ejets", 1);   tree->SetBranchAddress( "ejets", &ejets);
+  tree->SetBranchStatus("mujets", 1);   tree->SetBranchAddress( "mujets", &mujets);
 
   if(m_isMC){
     tree->SetBranchStatus("weight_mc", 1);        tree->SetBranchAddress( "weight_mc", &weight_mc );
     tree->SetBranchStatus("weight_pileup", 1);     tree->SetBranchAddress( "weight_pileup", &weight_pileup);
-    tree->SetBranchStatus("weight_bTagSF_77", 1);     tree->SetBranchAddress( "weight_bTagSF_77", &weight_bTagSF_77);
-    tree->SetBranchStatus("weight_bTagSF_70", 1);     tree->SetBranchAddress( "weight_bTagSF_70", &weight_bTagSF_70);
+    tree->SetBranchStatus("weight_bTagSF_77", 1);     tree->SetBranchAddress( "weight_bTagSF_77", &weight_bTagSF);
     tree->SetBranchStatus("weight_leptonSF", 1);   tree->SetBranchAddress( "weight_leptonSF", &weight_leptonSF);
     tree->SetBranchStatus("weight_jvt", 1);   tree->SetBranchAddress( "weight_jvt", &weight_jvt);
-    tree->SetBranchStatus("weight_ttbb_Nominal", 1);   tree->SetBranchAddress( "weight_ttbb_Nominal", &weight_ttbb_Nominal);
   }
-  
+
   tree->SetBranchStatus("el_pt", 1);   tree->SetBranchAddress( "el_pt", &el_pt);
   tree->SetBranchStatus("el_eta", 1);  tree->SetBranchAddress( "el_eta", &el_eta);
-  tree->SetBranchStatus("el_cl_eta", 1);  tree->SetBranchAddress( "el_cl_eta", &el_cl_eta);
   tree->SetBranchStatus("el_phi", 1);  tree->SetBranchAddress( "el_phi", &el_phi);
   tree->SetBranchStatus("el_e", 1);    tree->SetBranchAddress( "el_e", &el_e);
   tree->SetBranchStatus("el_charge", 1);        tree->SetBranchAddress( "el_charge", &el_charge);
@@ -618,8 +563,13 @@ EL::StatusCode HistogramMiniTree :: changeInput (bool firstFile)
   tree->SetBranchStatus("jet_eta", 1);           tree->SetBranchAddress( "jet_eta", &jet_eta);
   tree->SetBranchStatus("jet_phi", 1);           tree->SetBranchAddress( "jet_phi", &jet_phi);
   tree->SetBranchStatus("jet_e", 1);             tree->SetBranchAddress( "jet_e" , &jet_e );
+  tree->SetBranchStatus("jet_mv1", 1);           tree->SetBranchAddress( "jet_mv1", &jet_mv1);
+  tree->SetBranchStatus("jet_mvb", 1);           tree->SetBranchAddress( "jet_mvb", &jet_mvb);
+  tree->SetBranchStatus("jet_mv1c", 1);         tree->SetBranchAddress( "jet_mv1c" , &jet_mv1c);
+  tree->SetBranchStatus("jet_mv2c00", 1);       tree->SetBranchAddress( "jet_mv2c00" , &jet_mv2c00);
   tree->SetBranchStatus("jet_mv2c10", 1);       tree->SetBranchAddress( "jet_mv2c10" , &jet_mv2c10);
   tree->SetBranchStatus("jet_mv2c20", 1);       tree->SetBranchAddress( "jet_mv2c20" , &jet_mv2c20);
+  tree->SetBranchStatus("jet_ip3dsv1", 1);       tree->SetBranchAddress( "jet_ip3dsv1", &jet_ip3dsv1);
   tree->SetBranchStatus("jet_jvt", 1);           tree->SetBranchAddress( "jet_jvt", &jet_jvt);
 
   tree->SetBranchStatus("met_met", 1);           tree->SetBranchAddress( "met_met", &met_met);
@@ -667,7 +617,7 @@ EL::StatusCode HistogramMiniTree :: execute ()
 
   if( (m_eventCounter%1000) == 0) Info("execute()", "Event number %i", m_eventCounter);
 
-  //weight_mc = weight_pileup = weight_leptonSF = weight_bTagSF_70 = 1.; //Set ahead of time for data
+  //weight_mc = weight_pileup = weight_leptonSF = weight_bTagSF = 1.; //Set ahead of time for data
   wk()->tree()->GetEntry (wk()->treeEntry());
 
 
@@ -692,25 +642,21 @@ EL::StatusCode HistogramMiniTree :: execute ()
   if(m_isMC){
     //cout << "weight_pileup : " << weight_pileup << endl;   
     //eventWeight = weight_mc*weight_pileup*weight_leptonSF*m_XSWeight/m_totalNumEvents;
-    //cout << "Weights: \n mc: " << weight_mc << "\n pileup " << weight_pileup << " \n leptonSF " << weight_leptonSF << " \n jvt " << weight_jvt << " \n btag " << weight_bTagSF_70 <<"\n XS " << m_XSWeight << " \n totalNumEvents " << m_totalNumEvents << endl;
+    //cout << "Weights: \n mc: " << weight_mc << "\n pileup " << weight_pileup << " \n leptonSF " << weight_leptonSF << " \n jvt " << weight_jvt << " \n btag " << weight_bTagSF <<"\n XS " << m_XSWeight << " \n totalNumEvents " << m_totalNumEvents << endl;
     //All weights !
-    eventWeight *= weight_mc*weight_pileup*weight_leptonSF*weight_bTagSF_70*weight_jvt*m_XSWeight/m_totalNumEvents;
+    //eventWeight *= weight_mc*weight_pileup*weight_leptonSF*weight_bTagSF*weight_jvt*m_XSWeight/m_totalNumEvents;
     //Removing jvt weight, btag, pile-up 
-    //For Sherpa we do not apply it
-    //For ttbb = weight_ttbb_Nominal
-    //eventWeight *= weight_mc*m_XSWeight*weight_ttbb_Nominal/m_totalNumEvents;
+    eventWeight *= weight_mc*m_XSWeight/m_totalNumEvents;
     //eventWeight = 1; 
     //Removing Pileup
     //eventWeight *= weight_mc*weight_leptonSF*weight_bTagSF*weight_jvt*m_XSWeight/m_totalNumEvents;
-//    cout << "weights: " << eventWeight << "*** weight_mc ***  " << weight_mc << "**** m_XSWeight ****  " << m_XSWeight << "***TotalEventWeighted ***** " << m_totalNumEvents << endl;
+    cout << "weights: " << eventWeight << "*** weight_mc ***  " << weight_mc << "**** m_XSWeight ****  " << m_XSWeight << "***TotalEventWeighted ***** " << m_totalNumEvents << endl;
   }
   // Start different selections
   for(unsigned int iS=0; iS < selections.size(); ++iS){
 
     if( m_debug)  Info("execute()", "Starting selection %s \n", selections.at(iS)->name.c_str() );
     //selections
-    //
-   
     if (selections.at(iS)->jetNum != -1){ //jet Selection is set
        if( selections.at(iS)->jetEquality && jet_pt->size() != selections.at(iS)->jetNum)
         continue;
@@ -719,37 +665,26 @@ EL::StatusCode HistogramMiniTree :: execute ()
     }
 
     // Get selections from Preselection //
-    if (f_leptonDecision){
-      if (selections.at(iS)->elNum == 1 && f_use2016 && ejets_2016 != 1){
-        continue;
-      }
-      if (selections.at(iS)->muNum == 1 && f_use2016 && mujets_2016 != 1){
-        continue;
-      }
-      if (selections.at(iS)->elNum == 1 && f_use2015 && ejets_2015 != 1){
-        continue;
-      }
-      if (selections.at(iS)->muNum == 1 && f_use2015 && mujets_2015 != 1){
-        continue;
-      }
-    } else {
-
-      if (selections.at(iS)->elNum != -1 && el_pt->size() != selections.at(iS)->elNum)
-        continue;
-      if (selections.at(iS)->muNum != -1 && mu_pt->size() != selections.at(iS)->muNum)
-        continue;
-
+    if (selections.at(iS)->elNum == 1 && ejets != 1){
+      continue;
+    }
+    if (selections.at(iS)->muNum == 1 && mujets != 1){
+      continue;
     }
 
       //cout << "Channel e / mu " << ejets << " / " << mujets << endl;
       //cout << "#of electrons: " << el_pt->size() << endl;
       //cout << "#of Muons: " << mu_pt->size() << endl;
     //Here to remove the overlap with the dilepton channel!
-
-
+/*
+    if (selections.at(iS)->elNum != -1 && el_pt->size() != selections.at(iS)->elNum)
+      continue;
+    if (selections.at(iS)->muNum != -1 && mu_pt->size() != selections.at(iS)->muNum)
+      continue;
+*/
     vector<int> BJetIndicies;
-    for(unsigned int iJet=0; iJet < jet_mv2c10->size(); ++iJet){
-      if( jet_mv2c10->at(iJet) > m_bTagWP )
+    for(unsigned int iJet=0; iJet < jet_mv2c20->size(); ++iJet){
+      if( jet_mv2c20->at(iJet) > m_bTagWP )
         BJetIndicies.push_back(iJet);
   } 
 
@@ -813,14 +748,14 @@ EL::StatusCode HistogramMiniTree :: execute ()
       h_jet_eta_all.at(iS)->Fill( jet_eta->at(iJ), eventWeight );
       h_jet_phi_all.at(iS)->Fill( jet_phi->at(iJ), eventWeight );
       h_jet_e_all.at(iS)->Fill( jet_e->at(iJ)/1e3, eventWeight );
-      h_jet_mv2c10_all.at(iS)->Fill( jet_mv2c10->at(iJ), eventWeight );
+      h_jet_mv2c20_all.at(iS)->Fill( jet_mv2c20->at(iJ), eventWeight );
 
       if( iJ < numHistJets){
         vh_jet_pt.at(iS).at(iJ)->Fill( jet_pt->at(iJ)/1e3, eventWeight );
         vh_jet_eta.at(iS).at(iJ)->Fill( jet_eta->at(iJ), eventWeight );
         vh_jet_phi.at(iS).at(iJ)->Fill( jet_phi->at(iJ), eventWeight );
         vh_jet_e.at(iS).at(iJ)->Fill( jet_e->at(iJ)/1e3, eventWeight );
-        vh_jet_mv2c10.at(iS).at(iJ)->Fill( jet_mv2c10->at(iJ), eventWeight );
+        vh_jet_mv2c20.at(iS).at(iJ)->Fill( jet_mv2c20->at(iJ), eventWeight );
       }
     }//end jets
     h_jet_ht.at(iS)->Fill( ht_hadronic, eventWeight );
@@ -837,14 +772,14 @@ EL::StatusCode HistogramMiniTree :: execute ()
       h_bjet_eta_all.at(iS)->Fill( jet_eta->at(iJ), eventWeight );
       h_bjet_phi_all.at(iS)->Fill( jet_phi->at(iJ), eventWeight );
       h_bjet_e_all.at(iS)->Fill( jet_e->at(iJ)/1e3, eventWeight );
-      h_bjet_mv2c10_all.at(iS)->Fill( jet_mv2c10->at(iJ), eventWeight );
+      h_bjet_mv2c20_all.at(iS)->Fill( jet_mv2c20->at(iJ), eventWeight );
 
       if( iB < numHistJets){
         vh_bjet_pt.at(iS).at(iB)->Fill( jet_pt->at(iJ)/1e3, eventWeight );
         vh_bjet_eta.at(iS).at(iB)->Fill( jet_eta->at(iJ), eventWeight );
         vh_bjet_phi.at(iS).at(iB)->Fill( jet_phi->at(iJ), eventWeight );
         vh_bjet_e.at(iS).at(iB)->Fill( jet_e->at(iJ)/1e3, eventWeight );
-        vh_bjet_mv2c10.at(iS).at(iB)->Fill( jet_mv2c10->at(iJ), eventWeight );
+        vh_bjet_mv2c20.at(iS).at(iB)->Fill( jet_mv2c20->at(iJ), eventWeight );
       }
     }//end b-jets
     h_bjet_ht.at(iS)->Fill( ht_hadronic_bjet, eventWeight );

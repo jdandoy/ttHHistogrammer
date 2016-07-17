@@ -14,11 +14,11 @@ def ATLAS_LABEL(x, y, color=1, label = "Internal"):
     l.SetNDC()
     l.SetTextFont(72)
     l.SetTextColor(color)
-    l.DrawLatex(x,y,"ATLAS Internal")
+    l.DrawLatex(x,y,"ATLAS")
     l2 = ROOT.TLatex()  #l.SetTextAlign(12); l.SetTextSize(tsize);
     l2.SetNDC()
     l2.SetTextColor(color)
-    l2.DrawLatex(x+8,y,"Internal")
+    l2.DrawLatex(x+0.12,y,label)
 
 
 def myText(x, y, color, text):
